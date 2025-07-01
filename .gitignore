@@ -12,9 +12,6 @@ wheels/
 # Legacy Ruby code - reference only
 RUBY/
 
-# Flox
-.flox/
-
 # Claude artifacts
 .claude/
 
