@@ -1,0 +1,37 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Legacy Ruby code - reference only
+RUBY/
+
+# Flox
+.flox/
+
+# Claude artifacts
+.claude/
+
+
+# Environment variables
+.env
+
+# Coverage reports
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDEs
+.vscode/
+.idea/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
