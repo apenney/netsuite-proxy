@@ -1,0 +1,29 @@
+[project]
+name = "netsuite-proxy"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "deepdiff>=8.5.0",
+    "fastapi>=0.115.14",
+    "httpx>=0.28.1",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
+    "requests-oauthlib>=2.0.0",
+    "structlog>=25.4.0",
+    "zeep>=4.3.1",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "hypothesis>=6.135.20",
+    "pyright>=1.1.402",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.0.0",
+    "pytest-cov>=6.2.1",
+    "ruff>=0.12.1",
+    "uvicorn>=0.35.0",
+    "vcrpy>=7.0.0",
+]
