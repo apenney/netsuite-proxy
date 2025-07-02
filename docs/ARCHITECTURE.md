@@ -23,9 +23,12 @@ netsuite-proxy/
 │   │   ├── dependencies.py # Reusable dependency injections
 │   │   ├── health.py      # Health check endpoints
 │   │   └── middleware/    # API middleware
+│   │       ├── auth.py    # NetSuite authentication extraction
+│   │       └── logging.py # Request/response logging
 │   ├── core/              # Core functionality
 │   │   ├── config.py      # Configuration management
 │   │   ├── exceptions.py  # Custom exception classes
+│   │   ├── logging.py     # Structured logging configuration
 │   │   └── security.py    # Security utilities (future)
 │   ├── models/            # Pydantic models
 │   │   ├── health.py      # Health check response models
@@ -49,7 +52,7 @@ netsuite-proxy/
 - **Components**:
   - **Endpoints**: FastAPI routers defining API routes
   - **Dependencies**: Reusable dependency injection functions
-  - **Middleware**: Cross-cutting concerns (CORS, error handling, logging)
+  - **Middleware**: Cross-cutting concerns (CORS, error handling, request logging, authentication)
 - **Key Patterns**:
   - Use Pydantic models for request/response validation
   - Leverage FastAPI's dependency injection system
@@ -60,6 +63,7 @@ netsuite-proxy/
 - **Components**:
   - **Config**: Environment-based settings using pydantic-settings
   - **Exceptions**: Custom exception hierarchy
+  - **Logging**: Structured logging with contextual information
   - **Security**: Authentication and authorization utilities
 - **Key Patterns**:
   - Single source of truth for configuration
@@ -219,10 +223,13 @@ When implementing NetSuite services:
 - Async processing for long-running operations
 
 ### 4. Monitoring & Observability
-- Structured logging with correlation IDs
-- Metrics collection (Prometheus)
-- Distributed tracing (OpenTelemetry)
-- Health check endpoints with detailed status
+- ✅ Structured logging with correlation IDs (implemented with structlog)
+  - JSON format in production, human-readable in development
+  - Request IDs automatically generated and included in all logs
+  - Request/response logging with duration tracking
+- Metrics collection (Prometheus) - future
+- Distributed tracing (OpenTelemetry) - future
+- ✅ Health check endpoints with detailed status (implemented)
 
 ## Development Workflow
 

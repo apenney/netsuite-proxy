@@ -186,6 +186,15 @@ def mock_settings(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("SECRET_KEY_BASE", "test-secret")
     monkeypatch.setenv("NETSUITE__ACCOUNT", "TEST123")
     # Add more as needed
+
+@pytest.fixture
+def auth_headers():
+    """Provide NetSuite authentication headers for tests."""
+    return {
+        "X-NetSuite-Account": "TEST123",
+        "X-NetSuite-Email": "test@example.com",
+        "X-NetSuite-Password": "test-password"
+    }
 ```
 
 ## Best Practices
@@ -289,6 +298,48 @@ exclude_lines = [
     "raise NotImplementedError",
     "if TYPE_CHECKING:",
 ]
+```
+
+## Testing with Middleware
+
+### Testing Authenticated Endpoints
+
+When testing endpoints that require authentication:
+
+```python
+def test_authenticated_endpoint(client: TestClient, auth_headers):
+    """Test endpoint that requires authentication."""
+    response = client.get("/api/some-endpoint", headers=auth_headers)
+    assert response.status_code == 200
+```
+
+### Testing Request Logging
+
+The request logging middleware automatically adds X-Request-ID headers:
+
+```python
+def test_request_id_header(client: TestClient):
+    """Test that requests get unique IDs."""
+    response = client.get("/api/health")
+    assert "X-Request-ID" in response.headers
+    assert len(response.headers["X-Request-ID"]) == 36  # UUID format
+```
+
+### Testing Without Authentication
+
+For tests that should fail authentication:
+
+```python
+def test_missing_auth(client: TestClient):
+    """Test that missing auth returns 401."""
+    response = client.get("/api/customers")  # Protected endpoint
+    assert response.status_code == 400  # Missing account header
+    
+def test_invalid_auth(client: TestClient):
+    """Test that invalid auth returns 401."""
+    headers = {"X-NetSuite-Account": "TEST123"}  # Missing credentials
+    response = client.get("/api/customers", headers=headers)
+    assert response.status_code == 401
 ```
 
 ## Integration Testing (Future)

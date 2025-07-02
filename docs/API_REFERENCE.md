@@ -12,11 +12,41 @@ http://localhost:8000/api
 
 ## Authentication
 
-Currently, the API does not require authentication for health endpoints. NetSuite authentication is configured via environment variables.
+The API uses header-based authentication to extract NetSuite credentials for each request. Different endpoints have different authentication requirements:
 
-Future endpoints will support:
-- API Key authentication
-- Bearer token authentication
+### Exempt Endpoints (No Auth Required)
+- `/api/health` - Basic health check
+- `/api/health/detailed` - Detailed health check  
+- `/api/docs` - OpenAPI documentation
+- `/api/redoc` - ReDoc documentation
+- `/api/openapi.json` - OpenAPI spec
+
+### NetSuite Authentication Headers
+
+For all other endpoints, you must provide NetSuite credentials via HTTP headers:
+
+#### Required Header
+- `X-NetSuite-Account`: NetSuite account ID (always required)
+
+#### Password Authentication (Legacy)
+- `X-NetSuite-Email`: User email address
+- `X-NetSuite-Password`: User password
+- `X-NetSuite-Role`: Role ID (optional)
+
+#### OAuth Authentication (Recommended)
+- `X-NetSuite-Consumer-Key`: OAuth consumer key
+- `X-NetSuite-Consumer-Secret`: OAuth consumer secret
+- `X-NetSuite-Token-Id`: OAuth token ID
+- `X-NetSuite-Token-Secret`: OAuth token secret
+
+#### Optional Headers
+- `X-NetSuite-Api-Version`: API version (e.g., "2024_2")
+
+## Response Headers
+
+The API automatically adds the following headers to all responses:
+
+- `X-Request-ID`: Unique identifier for request correlation and debugging
 
 ## Common Response Formats
 
@@ -115,6 +145,40 @@ curl http://localhost:8000/api/health/detailed
   - `auth_configured` (boolean): Whether authentication is configured
   - `auth_type` (string): Type of authentication ("password", "oauth", or "none")
   - `restlet_configured` (boolean): Whether RESTlet endpoints are configured
+
+### Authentication Demo
+
+#### Get Authentication Info
+
+Get information about the current NetSuite authentication context.
+
+**Endpoint:** `GET /api/auth/info`
+
+**Authentication:** Required (any valid NetSuite credentials)
+
+**Example Request:**
+```bash
+curl -H "X-NetSuite-Account: TEST123" \
+     -H "X-NetSuite-Email: user@example.com" \
+     -H "X-NetSuite-Password: password" \
+     http://localhost:8000/api/auth/info
+```
+
+**Example Response:**
+```json
+{
+  "account": "TEST123",
+  "auth_type": "password",
+  "api_version": "default",
+  "has_role": false
+}
+```
+
+**Response Fields:**
+- `account` (string): NetSuite account ID from headers
+- `auth_type` (string): Type of authentication used ("password" or "oauth")
+- `api_version` (string): API version from headers or "default"
+- `has_role` (boolean): Whether a role ID was provided
 
 ### NetSuite Operations (Coming Soon)
 

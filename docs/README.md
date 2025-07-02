@@ -55,6 +55,8 @@ API endpoint documentation and examples.
 - **Dependency Injection**: FastAPI's DI system for clean, testable code
 - **Configuration**: Environment-based settings with validation
 - **Testing**: Comprehensive test coverage with pytest
+- **Structured Logging**: Request correlation and detailed debugging with structlog
+- **Authentication**: Header-based NetSuite credential extraction
 
 ## Contributing to Documentation
 

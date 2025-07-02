@@ -205,12 +205,12 @@ pip install -e ".[dev]"
 ### Debugging
 
 1. Use breakpoints in VS Code or PyCharm
-2. Add print statements with proper logging:
+2. Use structured logging for debugging:
 ```python
-import structlog
-logger = structlog.get_logger()
+from app.core.logging import get_logger
 
-logger.info("Processing request", customer_id=customer_id)
+logger = get_logger(__name__)
+logger.info("Processing request", customer_id=customer_id, status="started")
 ```
 
 3. Use pytest debugging:
@@ -232,6 +232,40 @@ Key environment variables:
 | `NETSUITE__API` | API version (e.g., 2024_2) | `2024_2` |
 
 See [Configuration](../app/core/config.py) for full list.
+
+## Making Authenticated API Calls
+
+When calling endpoints that require NetSuite authentication, provide credentials via headers:
+
+### Using cURL
+```bash
+# Password authentication
+curl -H "X-NetSuite-Account: TEST123" \
+     -H "X-NetSuite-Email: user@example.com" \
+     -H "X-NetSuite-Password: password" \
+     http://localhost:8000/api/auth/info
+
+# OAuth authentication  
+curl -H "X-NetSuite-Account: TEST123" \
+     -H "X-NetSuite-Consumer-Key: key" \
+     -H "X-NetSuite-Consumer-Secret: secret" \
+     -H "X-NetSuite-Token-Id: token" \
+     -H "X-NetSuite-Token-Secret: tokensecret" \
+     http://localhost:8000/api/auth/info
+```
+
+### Using Python requests
+```python
+import requests
+
+headers = {
+    "X-NetSuite-Account": "TEST123",
+    "X-NetSuite-Email": "user@example.com",
+    "X-NetSuite-Password": "password"
+}
+
+response = requests.get("http://localhost:8000/api/auth/info", headers=headers)
+```
 
 ## API Documentation
 
