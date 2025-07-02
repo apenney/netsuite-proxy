@@ -2,54 +2,101 @@
 Health check endpoints for monitoring application status.
 """
 
-from typing import Any
-
 from fastapi import APIRouter
 
-from app.core.config import get_netsuite_config, get_settings
+from app.api.dependencies import NetSuiteConfigDep, SettingsDep
+from app.models.health import DetailedHealthResponse, HealthResponse, NetSuiteHealthInfo
 
 router = APIRouter()
 
 
-@router.get("/health")
-async def health_check() -> dict[str, Any]:
+@router.get(
+    "/health",
+    response_model=HealthResponse,
+    summary="Basic health check",
+    description="Returns basic application health status and metadata",
+    responses={
+        200: {
+            "description": "Application is healthy",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "status": "healthy",
+                        "app_name": "NetSuite Proxy",
+                        "version": "0.1.0",
+                        "environment": "development",
+                    }
+                }
+            },
+        }
+    },
+)
+async def health_check(settings: SettingsDep) -> HealthResponse:
     """
     Basic health check endpoint.
 
     Returns:
         Health status and basic application info
     """
-    settings = get_settings()
-    return {
-        "status": "healthy",
-        "app_name": settings.app_name,
-        "version": settings.version,
-        "environment": settings.environment,
-    }
+    return HealthResponse(
+        status="healthy",
+        app_name=settings.app_name,
+        version=settings.version,
+        environment=settings.environment,
+    )
 
 
-@router.get("/health/detailed")
-async def detailed_health_check() -> dict[str, Any]:
+@router.get(
+    "/health/detailed",
+    response_model=DetailedHealthResponse,
+    summary="Detailed health check",
+    description="Returns detailed application health status including NetSuite configuration",
+    responses={
+        200: {
+            "description": "Application is healthy with detailed configuration",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "status": "healthy",
+                        "app_name": "NetSuite Proxy",
+                        "version": "0.1.0",
+                        "environment": "development",
+                        "debug": False,
+                        "netsuite": {
+                            "account": "TSTDRV123456",
+                            "api_version": "2024_2",
+                            "auth_configured": True,
+                            "auth_type": "oauth",
+                            "restlet_configured": True,
+                        },
+                    }
+                }
+            },
+        }
+    },
+)
+async def detailed_health_check(
+    settings: SettingsDep, netsuite_config: NetSuiteConfigDep
+) -> DetailedHealthResponse:
     """
     Detailed health check with configuration status.
 
     Returns:
         Detailed health status including NetSuite configuration
     """
-    settings = get_settings()
-    netsuite_config = get_netsuite_config()
+    netsuite_info = NetSuiteHealthInfo(
+        account=netsuite_config.account,
+        api_version=netsuite_config.api,
+        auth_configured=netsuite_config.auth_type != "none",
+        auth_type=netsuite_config.auth_type,
+        restlet_configured=bool(netsuite_config.script_id and netsuite_config.deploy_id),
+    )
 
-    return {
-        "status": "healthy",
-        "app_name": settings.app_name,
-        "version": settings.version,
-        "environment": settings.environment,
-        "debug": settings.debug,
-        "netsuite": {
-            "account": netsuite_config.account,
-            "api_version": netsuite_config.api,
-            "auth_configured": netsuite_config.auth_type != "none",
-            "auth_type": netsuite_config.auth_type,
-            "restlet_configured": bool(netsuite_config.script_id and netsuite_config.deploy_id),
-        },
-    }
+    return DetailedHealthResponse(
+        status="healthy",
+        app_name=settings.app_name,
+        version=settings.version,
+        environment=settings.environment,
+        debug=settings.debug,
+        netsuite=netsuite_info,
+    )
