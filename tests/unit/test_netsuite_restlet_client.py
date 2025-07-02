@@ -173,7 +173,6 @@ class TestNetSuiteRestletClient:
             client_secret="secret",
             resource_owner_key="token",
             resource_owner_secret="tokensecret",
-            realm="TEST123",
             signature_method="HMAC-SHA256",
         )
         expected_headers = {
@@ -182,6 +181,8 @@ class TestNetSuiteRestletClient:
             "User-Agent": "NetSuite-Proxy/1.0",
         }
         mock_session.headers.update.assert_called_once_with(expected_headers)
+        # Check that realm was set
+        assert mock_session.auth.realm == "TEST123"
 
     def test_create_oauth_session_missing_credentials(self):
         """Test OAuth session creation fails when credentials are missing."""

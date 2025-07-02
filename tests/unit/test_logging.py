@@ -73,7 +73,12 @@ class TestLoggingConfiguration:
         """Test creating request context without client IP."""
         context = add_request_context(request_id="test-123", method="POST", path="/api/customers")
 
-        assert context == {"request_id": "test-123", "method": "POST", "path": "/api/customers"}
+        assert context == {
+            "request_id": "test-123",
+            "method": "POST",
+            "path": "/api/customers",
+            "client_ip": None,
+        }
 
     def test_logger_output_format(self, caplog: pytest.LogCaptureFixture) -> None:
         """Test that logger outputs in expected format."""
