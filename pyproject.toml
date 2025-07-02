@@ -1,7 +1,7 @@
 [project]
 name = "netsuite-proxy"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Python-based REST-to-SOAP proxy for NetSuite integration"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -9,6 +9,7 @@ dependencies = [
     "fastapi>=0.115.14",
     "httpx>=0.28.1",
     "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
     "python-dotenv>=1.1.1",
     "requests-oauthlib>=2.0.0",
     "structlog>=25.4.0",
@@ -26,4 +27,81 @@ dev = [
     "ruff>=0.12.1",
     "uvicorn>=0.35.0",
     "vcrpy>=7.0.0",
+]
+
+[tool.pyright]
+pythonVersion = "3.13"
+include = ["app", "tests"]
+exclude = ["**/__pycache__", ".venv", "build", "dist"]
+typeCheckingMode = "strict"
+
+# Strict mode overrides - we'll be selective about what we enforce
+reportMissingImports = true
+reportMissingTypeStubs = false
+reportUnknownParameterType = true
+reportUnknownArgumentType = true
+reportUnknownVariableType = true
+reportUnknownMemberType = true
+reportGeneralTypeIssues = true
+reportOptionalMemberAccess = true
+reportOptionalCall = true
+reportOptionalIterable = true
+reportOptionalContextManager = true
+reportOptionalOperand = true
+reportTypedDictNotRequiredAccess = true
+reportPrivateImportUsage = true
+reportUnboundVariable = true
+reportUnnecessaryIsInstance = true
+reportUnnecessaryCast = true
+reportUnnecessaryComparison = true
+reportUnnecessaryContains = true
+reportAssertAlwaysTrue = true
+reportSelfClsParameterName = true
+reportUnusedFunction = true
+reportUnusedClass = true
+reportUnusedImport = true
+reportUnusedVariable = true
+reportDuplicateImport = true
+reportWildcardImportFromLibrary = true
+reportUntypedFunctionDecorator = false  # Allow untyped decorators
+reportUntypedClassDecorator = false     # Allow untyped decorators
+
+# Specific to our project structure
+executionEnvironments = [
+    { root = "app", pythonPlatform = "All" },
+    { root = "tests", extraPaths = ["app"] }
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--cov=app",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow tests",
+    "vcr: Tests that use VCR cassettes",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
 ]

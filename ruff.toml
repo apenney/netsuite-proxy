@@ -1,0 +1,58 @@
+# Ruff configuration for NetSuite Proxy project
+
+line-length = 100
+target-version = "py313"
+
+[lint]
+select = [
+    "F",     # Pyflakes
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "ANN",   # flake8-annotations
+    "B",     # flake8-bugbear
+    "A",     # flake8-builtins
+    "COM",   # flake8-commas
+    "C4",    # flake8-comprehensions
+    "DTZ",   # flake8-datetimez
+    "ISC",   # flake8-implicit-str-concat
+    "PIE",   # flake8-pie
+    "T20",   # flake8-print
+    "PT",    # flake8-pytest-style
+    "Q",     # flake8-quotes
+    "RET",   # flake8-return
+    "SIM",   # flake8-simplify
+    "TID",   # flake8-tidy-imports
+    "TCH",   # flake8-type-checking
+    "ARG",   # flake8-unused-arguments
+    "PTH",   # flake8-use-pathlib
+    "ERA",   # eradicate
+    "PD",    # pandas-vet
+    "PL",    # pylint
+    "RUF",   # ruff-specific rules
+]
+
+ignore = [
+    "COM812", # Trailing comma missing
+    "ISC001", # Single line implicit string concatenation
+    "ERA001", # Found commented-out code (we want to keep some comments)
+    "PLR2004", # Magic value used in comparison
+    "T201",    # Print statements (needed for main.py)
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["ANN", "PT", "PLR2004"]  # Relax type annotations and magic values in tests
+"app/api/endpoints/*" = ["TCH"]  # Allow non-type-checking imports in endpoints
+
+[lint.isort]
+known-first-party = ["app"]
+
+[lint.flake8-quotes]
+inline-quotes = "double"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
