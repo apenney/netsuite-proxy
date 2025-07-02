@@ -66,3 +66,14 @@ This file is for tracking tasks related to building this service. Claude, when y
 - [x] Create authentication service supporting both password and OAuth methods
 - [x] Implement environment-based configuration for test environment
 - [x] Write unit tests for all NetSuite integration classes
+
+## Codebase Refactoring (Completed)
+- [x] Simplify pytest fixture by removing redundant environment variable clearing
+- [x] Create constants module to centralize configuration values (DRY principle)
+- [x] Add discriminated unions for authentication configuration
+- [x] Create abstract base classes for NetSuite services
+- [x] Add protocol definitions for type safety and testability
+- [x] Update authentication middleware to use constants
+- [x] Improve error handling with exception chaining
+- [x] Fix all linting and formatting issues
+- [x] Configure ruff to allow Any types for NetSuite integration code
