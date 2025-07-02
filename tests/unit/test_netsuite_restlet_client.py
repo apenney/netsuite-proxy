@@ -82,7 +82,9 @@ class TestNetSuiteRestletClient:
             client = NetSuiteRestletClient(config)
 
             base_account = account.lower().replace("_", "-")
-            expected = f"https://{base_account}.restlets.api.netsuite.com/app/site/hosting/restlet.nl"
+            expected = (
+                f"https://{base_account}.restlets.api.netsuite.com/app/site/hosting/restlet.nl"
+            )
             assert client.base_url == expected
 
     def test_build_url(self):
