@@ -55,9 +55,10 @@ def test_health_check_with_oauth_auth(monkeypatch: pytest.MonkeyPatch) -> None:
 
     # Clear the settings cache
     get_settings.cache_clear()
-    
+
     # Import and create client after setting env vars
-    from app.main import app
+    from app.main import app  # noqa: PLC0415
+
     client = TestClient(app)
 
     response = client.get("/api/health/detailed")

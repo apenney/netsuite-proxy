@@ -2,7 +2,6 @@
 Tests for NetSuite exception classes.
 """
 
-
 from app.core.exceptions import (
     AuthenticationError,
     ConcurrencyError,
