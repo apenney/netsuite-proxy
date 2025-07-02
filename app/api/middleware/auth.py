@@ -1,11 +1,12 @@
 """Authentication middleware for extracting NetSuite credentials from headers."""
 
 from collections.abc import Awaitable, Callable
-from typing import Any
 
 from fastapi import HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
+
+from app.types import NetSuiteAuthBase
 
 from app.core.constants import (
     API_PREFIX,
@@ -107,7 +108,7 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-def get_netsuite_auth(request: Request) -> dict[str, Any]:
+def get_netsuite_auth(request: Request) -> NetSuiteAuthBase:
     """
     Get NetSuite authentication from request state.
 

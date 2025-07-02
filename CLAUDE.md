@@ -57,6 +57,20 @@ This service will be a python project to replace a legacy rails service.
 - Ask before: Making destructive operations, installing packages
 - Never allowed: Pushing directly to main branch, changing API keys/secrets
 
+# Type Annotations
+
+Write readable, domain-specific types instead of primitive type soup:
+
+- **Use TypedDict/dataclasses/Pydantic** for structured data instead of `dict[str, Any]`
+- **Create type aliases** for complex types: `UserId = str` or `AuthConfig = dict[str, str | None]`
+- **Break down nested types** into named components
+- **Prefer domain types** over primitives: `EmailAddress`, `UserId` vs raw `str`
+
+❌ Bad: `dict[str, dict[str, str | None] | None]`
+✅ Good: `AuthResponse` (defined as TypedDict or dataclass)
+
+See @docs/types.md for detailed examples and patterns.
+
 # Technologies
 
 ## Flox

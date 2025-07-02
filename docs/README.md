@@ -28,6 +28,14 @@ How to effectively use Pydantic for data validation and serialization.
 - Performance tips
 - Common pitfalls
 
+### 🔤 [Type System Guide](./types.md)
+Best practices for type annotations and avoiding type soup.
+- TypedDict patterns
+- Type aliases
+- Domain-specific types
+- Migration strategies
+- Real examples from our codebase
+
 ### 🚀 [Getting Started Guide](./GETTING_STARTED.md)
 Quick start guide for new developers.
 - Environment setup

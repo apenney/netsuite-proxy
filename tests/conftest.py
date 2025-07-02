@@ -9,6 +9,8 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
+from app.types import HeaderDict
+
 # Set test environment variables before any imports
 os.environ["ENVIRONMENT"] = "test"
 os.environ["SECRET_KEY_BASE"] = "test-secret-key-for-tests"
@@ -32,7 +34,7 @@ def client() -> Generator[TestClient]:
 
 
 @pytest.fixture
-def netsuite_auth_headers() -> dict[str, str]:
+def netsuite_auth_headers() -> HeaderDict:
     """Standard NetSuite password auth headers for testing."""
     return {
         "X-NetSuite-Account": "TEST123",
@@ -42,7 +44,7 @@ def netsuite_auth_headers() -> dict[str, str]:
 
 
 @pytest.fixture
-def netsuite_oauth_headers() -> dict[str, str]:
+def netsuite_oauth_headers() -> HeaderDict:
     """Standard NetSuite OAuth headers for testing."""
     return {
         "X-NetSuite-Account": "TEST123",

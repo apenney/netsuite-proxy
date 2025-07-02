@@ -9,12 +9,12 @@ This module configures structlog for the application with:
 
 import logging
 import sys
-from typing import Any
 
 import structlog
 from structlog.processors import CallsiteParameter
 
 from app.core.config import get_settings
+from app.types import RequestContext
 
 
 def configure_logging() -> None:
@@ -94,7 +94,7 @@ def add_request_context(
     method: str,
     path: str,
     client_ip: str | None = None,
-) -> dict[str, Any]:
+) -> RequestContext:
     """Create request context for logging.
 
     Args:
@@ -106,11 +106,9 @@ def add_request_context(
     Returns:
         Dictionary of request context
     """
-    context = {
-        "request_id": request_id,
-        "method": method,
-        "path": path,
-    }
-    if client_ip:
-        context["client_ip"] = client_ip
-    return context
+    return RequestContext(
+        request_id=request_id,
+        method=method,
+        path=path,
+        client_ip=client_ip,
+    )

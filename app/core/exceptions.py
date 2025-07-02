@@ -5,13 +5,13 @@ This module defines custom exceptions for handling various NetSuite API errors
 and application-specific error conditions.
 """
 
-from typing import Any
+from app.types import ErrorDetails
 
 
 class NetSuiteError(Exception):
     """Base exception for all NetSuite-related errors."""
 
-    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
+    def __init__(self, message: str, details: ErrorDetails | None = None) -> None:
         """
         Initialize NetSuiteError.
 

@@ -3,6 +3,7 @@
 from typing import Any
 
 from app.core.config import NetSuiteConfig
+from app.types import HeaderDict
 from app.core.constants import (
     NETSUITE_ACCOUNT_HEADER,
     NETSUITE_API_VERSION_HEADER,
@@ -129,7 +130,7 @@ class NetSuiteAuthService:
         return "production"
 
     @classmethod
-    def from_headers(cls, headers: dict[str, str]) -> "NetSuiteAuthService":
+    def from_headers(cls, headers: HeaderDict) -> "NetSuiteAuthService":
         """Create auth service from HTTP headers.
 
         This is used by the authentication middleware to create

@@ -8,6 +8,8 @@ from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, Request
 
+from app.types import NetSuiteAuthBase, OptionalNetSuiteAuth
+
 from app.core.constants import (
     NETSUITE_ACCOUNT_HEADER,
     NETSUITE_API_VERSION_HEADER,
@@ -37,7 +39,7 @@ async def extract_netsuite_auth(  # noqa: PLR0913
     script_id: Annotated[str | None, Header(alias=NETSUITE_SCRIPT_ID_HEADER)] = None,
     deploy_id: Annotated[str | None, Header(alias=NETSUITE_DEPLOY_ID_HEADER)] = None,
     api_version: Annotated[str | None, Header(alias=NETSUITE_API_VERSION_HEADER)] = None,
-) -> dict[str, str | None]:
+) -> NetSuiteAuthBase:
     """Extract NetSuite authentication from request headers.
 
     This dependency extracts all NetSuite-related headers and validates
@@ -110,14 +112,15 @@ async def extract_netsuite_auth(  # noqa: PLR0913
             detail="Authentication required. Provide either password or OAuth credentials.",
         )
 
-    return auth
+    # Return the auth dict directly - it matches NetSuiteAuthBase structure
+    return auth  # type: ignore[return-value]
 
 
 # Type alias for dependency injection
-NetSuiteAuth = Annotated[dict[str, str | None], Depends(extract_netsuite_auth)]
+NetSuiteAuth = Annotated[NetSuiteAuthBase, Depends(extract_netsuite_auth)]
 
 
-def get_netsuite_auth(request: Request) -> dict[str, str | None] | None:
+def get_netsuite_auth(request: Request) -> OptionalNetSuiteAuth:
     """Get NetSuite auth from request state if available.
 
     This is for optional auth scenarios where we want to check

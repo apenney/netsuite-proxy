@@ -362,7 +362,7 @@ class NetSuiteSoapClient:
             raise AuthenticationError("NetSuite authentication failed")
         if hasattr(error, "fault"):
             # SOAP fault
-            fault = error.fault
+            fault = getattr(error, "fault")  # type: ignore[attr-defined]
             raise SOAPFaultError(
                 getattr(fault, "faultcode", "Unknown"),
                 getattr(fault, "faultstring", str(error)),
