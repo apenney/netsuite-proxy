@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.api.auth_demo import router as auth_router
 from app.api.health import router as health_router
 from app.api.middleware import NetSuiteAuthMiddleware, RequestLoggingMiddleware
 from app.core.config import get_settings
@@ -72,7 +73,10 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # Configure CORS
+    # Add middleware in order of execution
+    # (FastAPI executes middleware in the order they are registered)
+
+    # 1. CORS middleware (executes first - handles preflight requests)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
@@ -81,10 +85,10 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Add request logging middleware
+    # 2. Request logging middleware (executes second - sets up request context)
     app.add_middleware(RequestLoggingMiddleware)
 
-    # Add NetSuite authentication middleware
+    # 3. NetSuite authentication middleware (executes third - uses request context)
     app.add_middleware(NetSuiteAuthMiddleware)
 
     # Configure exception handlers
@@ -117,6 +121,7 @@ def create_app() -> FastAPI:
 
     # Include routers
     app.include_router(health_router, prefix=settings.api_prefix, tags=["health"])
+    app.include_router(auth_router, prefix=settings.api_prefix, tags=["auth"])
 
     return app
 
