@@ -94,6 +94,36 @@ netsuite-proxy/
   - Handle NetSuite-specific transformations
   - Implement retry and error handling strategies
 
+## Middleware Architecture
+
+The application uses a layered middleware approach with careful ordering:
+
+### Middleware Stack (in execution order)
+1. **CORS Middleware** - Handles preflight requests and CORS headers
+2. **RequestLoggingMiddleware** - Sets up request context and logging
+   - Generates unique request IDs
+   - Measures request duration
+   - Logs request/response details
+   - Sets up contextvar for automatic log context injection
+3. **NetSuiteAuthMiddleware** - Extracts and validates NetSuite credentials
+   - Checks exempt paths (health, docs, etc.)
+   - Validates required headers
+   - Sets auth context on request state
+
+### Middleware Registration
+```python
+# In FastAPI, middleware executes in the order registered
+app.add_middleware(NetSuiteAuthMiddleware)     # Executes third
+app.add_middleware(RequestLoggingMiddleware)   # Executes second  
+app.add_middleware(CORSMiddleware, ...)        # Executes first
+```
+
+### Path Exemption
+The auth middleware exempts certain paths from authentication:
+- `/api` (root path only, not sub-paths)
+- `/api/health`, `/api/health/detailed`
+- `/api/docs`, `/api/redoc`, `/api/openapi.json`
+
 ## Configuration Architecture
 
 The application uses a hierarchical configuration system:
@@ -144,6 +174,16 @@ Each exception includes:
 - Human-readable message
 - Structured details dictionary
 - Specific error context (e.g., record ID, field name)
+
+### HTTP Status Code Mapping
+The exception handler automatically maps exception types to appropriate HTTP status codes:
+- `AuthenticationError` → 401 Unauthorized
+- `NetSuitePermissionError` → 403 Forbidden
+- `RecordNotFoundError` → 404 Not Found
+- `PageBoundsError` → 400 Bad Request
+- `ValidationError` → 400 Bad Request
+- `RateLimitError` → 429 Too Many Requests
+- Other `NetSuiteError` subclasses → 500 Internal Server Error
 
 ## Dependency Injection Pattern
 
@@ -229,6 +269,10 @@ When implementing NetSuite services:
   - JSON format in production, human-readable in development
   - Request IDs automatically generated and included in all logs
   - Request/response logging with duration tracking
+  - ✅ **Automatic request context injection** using contextvars
+    - All log messages within a request automatically include request_id, method, path, and client_ip
+    - No need to manually pass request context to loggers
+    - Context is properly isolated between concurrent requests
 - Metrics collection (Prometheus) - future
 - Distributed tracing (OpenTelemetry) - future
 - ✅ Health check endpoints with detailed status (implemented)

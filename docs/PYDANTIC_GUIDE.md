@@ -196,6 +196,39 @@ class NetSuiteConfig(BaseModel):
 
 Note: The `@computed_field` decorator is the Pydantic v2 way to handle computed properties. It ensures the field is included in model exports and schema generation.
 
+### 4. Datetime Validation with Timezone Awareness
+
+Always ensure datetimes are timezone-aware in your models:
+
+```python
+from datetime import datetime, UTC
+import pendulum
+from pydantic import BaseModel, field_validator
+
+class QueryParams(BaseModel):
+    created_since: datetime | None = None
+    created_before: datetime | None = None
+    
+    @field_validator("created_since", "created_before", mode="before")
+    @classmethod
+    def ensure_timezone_aware(cls, v: datetime | str | None) -> datetime | None:
+        """Ensure all datetime values are timezone-aware."""
+        if v is None:
+            return None
+        if isinstance(v, str):
+            # Use pendulum for robust timezone-aware parsing
+            parsed = pendulum.parse(v, tz="UTC")
+            # Convert to standard datetime
+            return datetime(
+                parsed.year, parsed.month, parsed.day,
+                parsed.hour, parsed.minute, parsed.second,
+                parsed.microsecond, tzinfo=UTC
+            )
+        if isinstance(v, datetime) and v.tzinfo is None:
+            raise ValueError("Datetime must be timezone-aware")
+        return v
+```
+
 ## Serialization and Deserialization
 
 ### 1. Model to Dict
@@ -529,6 +562,7 @@ class Model(BaseModel):
 2. **Use TypeAdapter for Simple Validation**: For non-model validation
 3. **Avoid Complex Validators**: Keep validation logic simple
 4. **Use `model_construct()` Carefully**: Bypasses validation for performance
+5. **Use `cached_property` for Expensive Computations**: Cache parsed results
 
 ```python
 # Fast construction without validation (use carefully!)
@@ -537,6 +571,30 @@ customer = Customer.model_construct(
     name="John",
     email="john@example.com"
 )
+
+# Using cached_property for expensive parsing
+from functools import cached_property
+
+class QueryParams(BaseModel):
+    ids: str | None = None
+    
+    @cached_property
+    def id_list(self) -> list[int] | None:
+        """Parse IDs into list - only computed once."""
+        if not self.ids:
+            return None
+        # Expensive parsing logic here
+        return parse_id_string(self.ids)
+```
+
+### Preventing DoS with Range Validation
+When parsing ranges, always validate the size to prevent memory exhaustion:
+
+```python
+MAX_RANGE_SIZE = 10000
+
+if end - start + 1 > MAX_RANGE_SIZE:
+    raise ValueError(f"Range too large (max {MAX_RANGE_SIZE} items)")
 ```
 
 ## Resources
