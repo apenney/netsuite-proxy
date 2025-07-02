@@ -37,27 +37,25 @@ class TestNetSuiteRestletClient:
 
     def test_init_missing_script_id(self):
         """Test initialization fails when script_id is missing."""
-        config = NetSuiteConfig(
-            account="TEST123",
-            email="test@example.com",
-            password="password",
-            deploy_id="customdeploy1",
-        )
-
-        with pytest.raises(ValueError, match="RESTlet script_id and deploy_id are required"):
-            NetSuiteRestletClient(config)
+        # The validation now happens at config creation time
+        with pytest.raises(ValueError, match="Both script_id and deploy_id must be provided"):
+            NetSuiteConfig(
+                account="TEST123",
+                email="test@example.com",
+                password="password",
+                deploy_id="customdeploy1",
+            )
 
     def test_init_missing_deploy_id(self):
         """Test initialization fails when deploy_id is missing."""
-        config = NetSuiteConfig(
-            account="TEST123",
-            email="test@example.com",
-            password="password",
-            script_id="customscript123",
-        )
-
-        with pytest.raises(ValueError, match="RESTlet script_id and deploy_id are required"):
-            NetSuiteRestletClient(config)
+        # The validation now happens at config creation time
+        with pytest.raises(ValueError, match="Both script_id and deploy_id must be provided"):
+            NetSuiteConfig(
+                account="TEST123",
+                email="test@example.com",
+                password="password",
+                script_id="customscript123",
+            )
 
     def test_base_url_production(self):
         """Test base URL generation for production account."""
@@ -186,18 +184,16 @@ class TestNetSuiteRestletClient:
 
     def test_create_oauth_session_missing_credentials(self):
         """Test OAuth session creation fails when credentials are missing."""
-        config = NetSuiteConfig(
-            account="TEST123",
-            consumer_key="key",
-            consumer_secret="secret",
-            # Missing token credentials
-            script_id="script",
-            deploy_id="deploy",
-        )
-        client = NetSuiteRestletClient(config)
-
-        with pytest.raises(AuthenticationError, match="OAuth credentials required"):
-            client._create_oauth_session()
+        # The validation now happens at config creation time
+        with pytest.raises(ValueError, match="OAuth authentication requires all four fields"):
+            NetSuiteConfig(
+                account="TEST123",
+                consumer_key="key",
+                consumer_secret="secret",
+                # Missing token credentials
+                script_id="script",
+                deploy_id="deploy",
+            )
 
     def test_handle_response_success(self):
         """Test successful response handling."""

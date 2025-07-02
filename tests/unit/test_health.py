@@ -46,7 +46,7 @@ def test_detailed_health_check(client: TestClient) -> None:
 def test_health_check_with_oauth_auth(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test health check shows correct auth type for OAuth."""
     # Set OAuth environment variables (using double underscore for nested config)
-    monkeypatch.setenv("SECRET_KEY_BASE", "test-secret")
+    monkeypatch.setenv("SECRET_KEY_BASE", "test-secret-key-that-is-32-chars-long-test")
     monkeypatch.setenv("NETSUITE__ACCOUNT", "TEST123")
     monkeypatch.setenv("NETSUITE__CONSUMER_KEY", "key")
     monkeypatch.setenv("NETSUITE__CONSUMER_SECRET", "secret")

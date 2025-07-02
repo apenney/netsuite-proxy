@@ -13,7 +13,7 @@ from app.types import HeaderDict
 
 # Set test environment variables before any imports
 os.environ["ENVIRONMENT"] = "test"
-os.environ["SECRET_KEY_BASE"] = "test-secret-key-for-tests"
+os.environ["SECRET_KEY_BASE"] = "test-secret-key-for-tests-that-is-32-characters"
 
 from app.core.config import get_settings
 from app.main import create_app
@@ -61,7 +61,7 @@ def mock_settings(monkeypatch: pytest.MonkeyPatch):
 
     def _mock_settings(**kwargs: Any) -> None:
         defaults = {
-            "SECRET_KEY_BASE": "test-secret",
+            "SECRET_KEY_BASE": "test-secret-key-for-tests-that-is-32-characters",
             "NETSUITE__ACCOUNT": "TEST123",
             "NETSUITE__API": "2024_2",
             "ENVIRONMENT": "test",

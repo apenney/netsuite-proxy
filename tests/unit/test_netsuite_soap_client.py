@@ -125,17 +125,14 @@ class TestNetSuiteSoapClient:
 
     def test_create_passport_oauth_auth_missing_credentials(self):
         """Test passport creation fails when OAuth credentials are missing."""
-        config = NetSuiteConfig(
-            account="TEST123",
-            consumer_key="key",
-            consumer_secret="secret",
-            # Missing token_id and token_secret
-        )
-        client = NetSuiteSoapClient(config)
-
-        # When OAuth credentials are incomplete, auth_type is "none"
-        with pytest.raises(AuthenticationError, match="Unsupported auth type: none"):
-            client._create_passport()
+        # The validation now happens at config creation time
+        with pytest.raises(ValueError, match="OAuth authentication requires all four fields"):
+            NetSuiteConfig(
+                account="TEST123",
+                consumer_key="key",
+                consumer_secret="secret",
+                # Missing token_id and token_secret
+            )
 
     def test_create_passport_no_auth(self):
         """Test passport creation fails when no auth is configured."""
