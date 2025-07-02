@@ -70,7 +70,7 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
                 {
                     "email": email,
                     "password": password,
-                    "role_id": get_header(NETSUITE_ROLE_HEADER),
+                    "role": get_header(NETSUITE_ROLE_HEADER),
                     "auth_type": "password",
                 }
             )

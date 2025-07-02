@@ -94,7 +94,7 @@ class TestNetSuiteAuthMiddleware:
         assert auth["account"] == "TEST123"
         assert auth["email"] == "test@example.com"
         assert auth["password"] == "secret"
-        assert auth["role_id"] == "3"
+        assert auth["role"] == "3"
         assert auth["api_version"] == "2024_2"
         assert auth["auth_type"] == "password"
 
@@ -149,7 +149,7 @@ class TestNetSuiteAuthMiddleware:
         assert response.status_code == 200
         auth = response.json()["auth"]
         assert auth["auth_type"] == "password"
-        assert auth["role_id"] is None
+        assert auth["role"] is None
 
     def test_get_netsuite_auth_dependency(self) -> None:
         """Test the get_netsuite_auth dependency function."""

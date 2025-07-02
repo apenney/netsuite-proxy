@@ -6,7 +6,7 @@ query parameters used in NetSuite API operations.
 """
 
 import contextlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Annotated, Self
 
@@ -129,7 +129,7 @@ class BaseQueryParams(BaseModel):
                     parsed.minute if hasattr(parsed, "minute") else 0,  # type: ignore[attr-defined]
                     parsed.second if hasattr(parsed, "second") else 0,  # type: ignore[attr-defined]
                     parsed.microsecond if hasattr(parsed, "microsecond") else 0,  # type: ignore[attr-defined]
-                    tzinfo=timezone.utc,  # Use UTC as default
+                    tzinfo=UTC,  # Use UTC as default
                 )
             raise ValueError(f"Could not parse datetime from string: {v}")
         if isinstance(v, datetime) and v.tzinfo is None:
@@ -346,7 +346,7 @@ class InvoiceQueryParams(BaseQueryParams):
                     parsed.minute if hasattr(parsed, "minute") else 0,  # type: ignore[attr-defined]
                     parsed.second if hasattr(parsed, "second") else 0,  # type: ignore[attr-defined]
                     parsed.microsecond if hasattr(parsed, "microsecond") else 0,  # type: ignore[attr-defined]
-                    tzinfo=timezone.utc,  # Use UTC as default
+                    tzinfo=UTC,  # Use UTC as default
                 )
             raise ValueError(f"Could not parse datetime from string: {v}")
         if isinstance(v, datetime) and v.tzinfo is None:
