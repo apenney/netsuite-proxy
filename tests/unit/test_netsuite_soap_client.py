@@ -148,7 +148,7 @@ class TestNetSuiteSoapClient:
 
         error = Exception("Connection timeout occurred")
 
-        with pytest.raises(NetSuiteTimeoutError) as exc_info:
+        with pytest.raises(NetSuiteTimeoutError):
             client._handle_soap_error(error)
 
     def test_handle_soap_error_authentication(self):

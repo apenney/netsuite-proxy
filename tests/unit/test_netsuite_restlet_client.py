@@ -31,7 +31,7 @@ class TestNetSuiteRestletClient:
 
         assert client.config == config
         assert client._session is None
-        assert client.DEFAULT_TIMEOUT == 300
+        assert client.default_timeout == 300
 
     def test_init_missing_script_id(self):
         """Test initialization fails when script_id is missing."""
@@ -81,7 +81,8 @@ class TestNetSuiteRestletClient:
             )
             client = NetSuiteRestletClient(config)
 
-            expected = f"https://{account.lower().replace('_', '-')}.restlets.api.netsuite.com/app/site/hosting/restlet.nl"
+            base_account = account.lower().replace("_", "-")
+            expected = f"https://{base_account}.restlets.api.netsuite.com/app/site/hosting/restlet.nl"
             assert client.base_url == expected
 
     def test_build_url(self):
