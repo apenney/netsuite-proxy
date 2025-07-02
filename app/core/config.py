@@ -8,7 +8,7 @@ for the application, including NetSuite credentials and API settings.
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -118,7 +118,7 @@ class Settings(BaseSettings):
     )
 
     # NetSuite configuration
-    netsuite: NetSuiteConfig = Field(default_factory=NetSuiteConfig)
+    netsuite: NetSuiteConfig | None = None
 
     # Logging
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = Field(
@@ -145,6 +145,14 @@ class Settings(BaseSettings):
         extra="ignore",  # Ignore extra fields from env
     )
 
+    @model_validator(mode="after")
+    def populate_netsuite(self) -> "Settings":
+        """Populate NetSuite config from environment if not provided."""
+        if self.netsuite is None:
+            # Create NetSuiteConfig from environment
+            self.netsuite = NetSuiteConfig()
+        return self
+
 
 @lru_cache
 def get_settings() -> Settings:
@@ -161,4 +169,7 @@ def get_settings() -> Settings:
 # Convenience function for getting NetSuite config directly
 def get_netsuite_config() -> NetSuiteConfig:
     """Get NetSuite configuration."""
-    return get_settings().netsuite
+    settings = get_settings()
+    if settings.netsuite is None:
+        raise RuntimeError("NetSuite configuration not available")
+    return settings.netsuite
