@@ -42,6 +42,8 @@ on-activate = '''
     echo "Installing Python dependencies..."
     uv sync
   fi
+
+  #
 '''
 
 
@@ -54,6 +56,7 @@ bash = '''
   # Activate Python virtual environment if it exists
   if [ -f "$FLOX_ENV_PROJECT/.venv/bin/activate" ]; then
     source "$FLOX_ENV_PROJECT/.venv/bin/activate"
+    export PYTHONPATH=.:$PYTHONPATH
   fi
 '''
 zsh = '''
@@ -66,7 +69,10 @@ fish = '''
   # Activate Python virtual environment if it exists
   if test -f "$FLOX_ENV_PROJECT/.venv/bin/activate.fish"
     source "$FLOX_ENV_PROJECT/.venv/bin/activate.fish"
+    set -x PYTHONPATH .:$PYTHONPATH
   end
+  
+  # 
 '''
 
 

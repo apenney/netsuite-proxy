@@ -14,12 +14,12 @@
       }
     },
     "hook": {
-      "on-activate": "  # Create Python virtual environment if it doesn't exist\n  if [ ! -d \"$FLOX_ENV_PROJECT/.venv\" ]; then\n    echo \"Creating Python virtual environment...\"\n    uv venv \"$FLOX_ENV_PROJECT/.venv\"\n    echo \"Installing Python dependencies...\"\n    uv sync\n  fi\n"
+      "on-activate": "  # Create Python virtual environment if it doesn't exist\n  if [ ! -d \"$FLOX_ENV_PROJECT/.venv\" ]; then\n    echo \"Creating Python virtual environment...\"\n    uv venv \"$FLOX_ENV_PROJECT/.venv\"\n    echo \"Installing Python dependencies...\"\n    uv sync\n  fi\n\n  #\n"
     },
     "profile": {
-      "bash": "  # Activate Python virtual environment if it exists\n  if [ -f \"$FLOX_ENV_PROJECT/.venv/bin/activate\" ]; then\n    source \"$FLOX_ENV_PROJECT/.venv/bin/activate\"\n  fi\n",
+      "bash": "  # Activate Python virtual environment if it exists\n  if [ -f \"$FLOX_ENV_PROJECT/.venv/bin/activate\" ]; then\n    source \"$FLOX_ENV_PROJECT/.venv/bin/activate\"\n    export PYTHONPATH=.:$PYTHONPATH\n  fi\n",
       "zsh": "  # Activate Python virtual environment if it exists\n  if [ -f \"$FLOX_ENV_PROJECT/.venv/bin/activate\" ]; then\n    source \"$FLOX_ENV_PROJECT/.venv/bin/activate\"\n  fi\n",
-      "fish": "  # Activate Python virtual environment if it exists\n  if test -f \"$FLOX_ENV_PROJECT/.venv/bin/activate.fish\"\n    source \"$FLOX_ENV_PROJECT/.venv/bin/activate.fish\"\n  end\n"
+      "fish": "  # Activate Python virtual environment if it exists\n  if test -f \"$FLOX_ENV_PROJECT/.venv/bin/activate.fish\"\n    source \"$FLOX_ENV_PROJECT/.venv/bin/activate.fish\"\n    set -x PYTHONPATH .:$PYTHONPATH\n  end\n  \n  # \n"
     },
     "options": {
       "systems": [
