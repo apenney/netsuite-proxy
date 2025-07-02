@@ -8,12 +8,16 @@ query parameters used in NetSuite API operations.
 import contextlib
 from datetime import UTC, datetime
 from enum import Enum
+from functools import cached_property
 from typing import Annotated, Self
 
 import pendulum
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.types import QueryParams
+
+# Constants
+MAX_ID_RANGE_SIZE = 10000  # Maximum allowed size for ID ranges to prevent memory issues
 
 
 class SortOrder(str, Enum):
@@ -147,16 +151,27 @@ class BaseQueryParams(BaseModel):
 
         return self
 
-    @property
+    @cached_property
     def field_list(self) -> list[str] | None:
         """Parse fields into a list."""
         if not self.fields:
             return None
         return [f.strip() for f in self.fields.split(",") if f.strip()]
 
-    @property
+    @cached_property
     def id_list(self) -> list[int] | None:
-        """Parse IDs into a list of integers."""
+        """Parse IDs into a list of integers.
+
+        Supports formats:
+        - Single IDs: "123"
+        - Comma-separated: "123,456,789"
+        - Ranges: "100-200"
+        - Array notation: "[123,456]"
+        - Mixed: "123,456-460,789"
+
+        Raises:
+            ValueError: If a range is too large (>MAX_ID_RANGE_SIZE)
+        """
         if not self.ids:
             return None
 
@@ -179,9 +194,18 @@ class BaseQueryParams(BaseModel):
                     start_int = int(start.strip())
                     end_int = int(end.strip())
                     if start_int <= end_int:
+                        range_size = end_int - start_int + 1
+                        if range_size > MAX_ID_RANGE_SIZE:
+                            raise ValueError(
+                                f"ID range {start_int}-{end_int} is too large "
+                                f"({range_size} items). Maximum allowed is {MAX_ID_RANGE_SIZE}"
+                            )
                         result.extend(range(start_int, end_int + 1))
-                except ValueError:
-                    # Not a valid range, treat as single ID
+                except ValueError as e:
+                    # Re-raise if it's our range size error
+                    if "is too large" in str(e):
+                        raise
+                    # Otherwise, not a valid range, treat as single ID
                     with contextlib.suppress(ValueError):
                         result.append(int(part))
             else:

@@ -172,6 +172,14 @@ class TestFieldSelection:
         params = BaseQueryParams(body_fields_only=True)
         assert params.body_fields_only is True
 
+    def test_field_list_caching(self):
+        """Test that field_list is cached and not re-parsed."""
+        params = BaseQueryParams(fields="id,name,email")
+        list1 = params.field_list
+        list2 = params.field_list
+        # Should be the exact same object due to caching
+        assert list1 is list2
+
 
 class TestIdFiltering:
     """Tests for ID filtering parameters in BaseQueryParams."""
@@ -217,6 +225,29 @@ class TestIdFiltering:
         """Test partial invalid IDs."""
         params = BaseQueryParams(ids="1,abc,3")
         assert params.id_list == [1, 3]
+
+    def test_large_range_validation(self):
+        """Test that large ID ranges are rejected."""
+        params = BaseQueryParams(ids="1-10001")  # One more than MAX_ID_RANGE_SIZE
+        with pytest.raises(ValueError) as exc_info:
+            _ = params.id_list  # Access the property to trigger parsing
+        assert "is too large" in str(exc_info.value)
+        assert "Maximum allowed is 10000" in str(exc_info.value)
+
+    def test_valid_large_range(self):
+        """Test that ranges within limit are allowed."""
+        params = BaseQueryParams(ids="1-100")
+        assert len(params.id_list) == 100
+        assert params.id_list[0] == 1
+        assert params.id_list[-1] == 100
+
+    def test_id_list_caching(self):
+        """Test that id_list is cached and not re-parsed."""
+        params = BaseQueryParams(ids="1-5")
+        list1 = params.id_list
+        list2 = params.id_list
+        # Should be the exact same object due to caching
+        assert list1 is list2
 
 
 class TestPerformanceParams:
