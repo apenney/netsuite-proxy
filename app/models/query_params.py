@@ -6,10 +6,11 @@ query parameters used in NetSuite API operations.
 """
 
 import contextlib
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Annotated, Self
 
+import pendulum
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.types import QueryParams
@@ -104,6 +105,36 @@ class BaseQueryParams(BaseModel):
         None,
         description="Filter by subsidiary",
     )
+
+    @field_validator(
+        "created_since", "created_before", "updated_since", "updated_before", mode="before"
+    )
+    @classmethod
+    def ensure_timezone_aware(cls, v: datetime | str | None) -> datetime | None:
+        """Ensure all datetime values are timezone-aware."""
+        if v is None:
+            return None
+        if isinstance(v, str):
+            # Use pendulum for robust timezone-aware parsing
+            # Pendulum returns a DateTime which is a datetime subclass
+            parsed = pendulum.parse(v, tz="UTC")
+            # Ensure we have a DateTime object, not Date/Time/Duration
+            if hasattr(parsed, "year"):
+                # Convert to standard datetime to avoid type issues
+                return datetime(
+                    parsed.year,  # type: ignore[attr-defined]
+                    parsed.month,  # type: ignore[attr-defined]
+                    parsed.day,  # type: ignore[attr-defined]
+                    parsed.hour if hasattr(parsed, "hour") else 0,  # type: ignore[attr-defined]
+                    parsed.minute if hasattr(parsed, "minute") else 0,  # type: ignore[attr-defined]
+                    parsed.second if hasattr(parsed, "second") else 0,  # type: ignore[attr-defined]
+                    parsed.microsecond if hasattr(parsed, "microsecond") else 0,  # type: ignore[attr-defined]
+                    tzinfo=timezone.utc,  # Use UTC as default
+                )
+            raise ValueError(f"Could not parse datetime from string: {v}")
+        if isinstance(v, datetime) and v.tzinfo is None:
+            raise ValueError("Datetime must be timezone-aware")
+        return v
 
     @model_validator(mode="after")
     def validate_date_ranges(self) -> Self:
@@ -294,6 +325,33 @@ class InvoiceQueryParams(BaseQueryParams):
         None,
         description="Filter invoices due before this date",
     )
+
+    @field_validator("due_date_since", "due_date_before", mode="before")
+    @classmethod
+    def ensure_timezone_aware_due_dates(cls, v: datetime | str | None) -> datetime | None:
+        """Ensure all datetime values are timezone-aware."""
+        if v is None:
+            return None
+        if isinstance(v, str):
+            # Use pendulum for robust timezone-aware parsing
+            parsed = pendulum.parse(v, tz="UTC")
+            # Ensure we have a DateTime object, not Date/Time/Duration
+            if hasattr(parsed, "year"):
+                # Convert to standard datetime to avoid type issues
+                return datetime(
+                    parsed.year,  # type: ignore[attr-defined]
+                    parsed.month,  # type: ignore[attr-defined]
+                    parsed.day,  # type: ignore[attr-defined]
+                    parsed.hour if hasattr(parsed, "hour") else 0,  # type: ignore[attr-defined]
+                    parsed.minute if hasattr(parsed, "minute") else 0,  # type: ignore[attr-defined]
+                    parsed.second if hasattr(parsed, "second") else 0,  # type: ignore[attr-defined]
+                    parsed.microsecond if hasattr(parsed, "microsecond") else 0,  # type: ignore[attr-defined]
+                    tzinfo=timezone.utc,  # Use UTC as default
+                )
+            raise ValueError(f"Could not parse datetime from string: {v}")
+        if isinstance(v, datetime) and v.tzinfo is None:
+            raise ValueError("Datetime must be timezone-aware")
+        return v
 
     def to_netsuite_params(self) -> QueryParams:
         """Convert to NetSuite-compatible parameters."""

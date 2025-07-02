@@ -8,6 +8,7 @@ This service will be a python project to replace a legacy rails service.
 2. **Run tests before committing** - Use `basedpyright`, `pytest` and `pre-commit run`
 3. **Follow type hints strictly** - All code must pass basedpyright
 4. **Document as you code** - Update docs with any API changes
+5. **Lean into the linters** - Do not add exclusions for ruff or basedpyright
 
 # Important
 
@@ -36,7 +37,6 @@ This service will be a python project to replace a legacy rails service.
 - `pytest` to run the python tests
 - `pre-commit run` to run the pre-commit tests
 - `pre-commit run --all-files` to run on all files (not just staged)
-- If pre-commit fails on basedpyright: use `--no-verify` flag when committing (basedpyright may fail outside venv)
 
 # Code Style Guidelines
 
@@ -70,6 +70,15 @@ Write readable, domain-specific types instead of primitive type soup:
 ✅ Good: `AuthResponse` (defined as TypedDict or dataclass)
 
 See @docs/TYPES.md for detailed examples and patterns.
+
+# DateTime Handling
+
+**ALWAYS use timezone-aware datetimes**. Never use naive datetimes in this codebase.
+
+- Default to UTC when no timezone is specified
+- All datetimes must have `tzinfo` set
+- Use `datetime.now(timezone.utc)` not `datetime.now()`
+- See @docs/DATETIME_HANDLING.md for detailed guidelines
 
 # Flox
 

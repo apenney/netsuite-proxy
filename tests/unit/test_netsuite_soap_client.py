@@ -92,7 +92,9 @@ class TestNetSuiteSoapClient:
     @patch("app.services.netsuite.soap.client.NetSuiteSoapClient._generate_nonce")
     @patch("app.services.netsuite.soap.client.NetSuiteSoapClient._get_timestamp")
     @patch("app.services.netsuite.soap.client.NetSuiteSoapClient._generate_signature")
-    def test_create_passport_oauth_auth(self, mock_signature: Mock, mock_timestamp: Mock, mock_nonce: Mock):
+    def test_create_passport_oauth_auth(
+        self, mock_signature: Mock, mock_timestamp: Mock, mock_nonce: Mock
+    ):
         """Test passport creation for OAuth authentication."""
         mock_nonce.return_value = "test-nonce"
         mock_timestamp.return_value = "1234567890"

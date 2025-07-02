@@ -8,8 +8,6 @@ from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, Request
 
-from app.types import NetSuiteAuthBase, OptionalNetSuiteAuth
-
 from app.core.constants import (
     NETSUITE_ACCOUNT_HEADER,
     NETSUITE_API_VERSION_HEADER,
@@ -24,6 +22,7 @@ from app.core.constants import (
     NETSUITE_TOKEN_SECRET_HEADER,
 )
 from app.core.logging import get_logger
+from app.types import NetSuiteAuthBase, OptionalNetSuiteAuth
 
 
 async def extract_netsuite_auth(  # noqa: PLR0913

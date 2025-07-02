@@ -387,4 +387,3 @@ class TestParseNetsuiteTimestamp:
     def test_invalid_timestamp(self):
         """Test invalid timestamp."""
         assert parse_netsuite_timestamp("not-a-timestamp") is None
-

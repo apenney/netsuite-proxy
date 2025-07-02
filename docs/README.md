@@ -36,6 +36,13 @@ Best practices for type annotations and avoiding type soup.
 - Migration strategies
 - Real examples from our codebase
 
+### 📅 [DateTime Handling Guide](./DATETIME_HANDLING.md)
+Critical guidelines for working with dates and times.
+- Always use timezone-aware datetimes
+- UTC by default
+- NetSuite timezone handling
+- Common pitfalls to avoid
+
 ### 🚀 [Getting Started Guide](./GETTING_STARTED.md)
 Quick start guide for new developers.
 - Environment setup

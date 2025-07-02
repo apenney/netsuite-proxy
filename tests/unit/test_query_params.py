@@ -114,6 +114,26 @@ class TestDateRangeParams:
         assert params.updated_since is None
         assert params.updated_before == datetime(2024, 12, 31, tzinfo=UTC)
 
+    def test_timezone_aware_datetime_required(self):
+        """Test that naive datetimes are rejected."""
+        # Naive datetime should raise validation error
+        with pytest.raises(ValidationError) as exc_info:
+            BaseQueryParams(created_since=datetime(2024, 1, 1))  # noqa: DTZ001 - Testing naive datetime
+        errors = exc_info.value.errors()
+        assert any("timezone-aware" in str(e) for e in errors)
+
+    def test_string_datetime_parsing(self):
+        """Test that string datetimes are parsed as timezone-aware."""
+        # ISO format string should be parsed with UTC timezone
+        params = BaseQueryParams(created_since="2024-01-01T12:00:00")
+        assert params.created_since is not None
+        assert params.created_since.tzinfo is not None
+
+        # ISO format with timezone should preserve timezone info
+        params = BaseQueryParams(created_since="2024-01-01T12:00:00+05:00")
+        assert params.created_since is not None
+        assert params.created_since.tzinfo is not None
+
 
 class TestFieldSelection:
     """Tests for field selection parameters in BaseQueryParams."""

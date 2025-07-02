@@ -3,7 +3,6 @@
 from typing import Any
 
 from app.core.config import NetSuiteConfig
-from app.types import HeaderDict
 from app.core.constants import (
     NETSUITE_ACCOUNT_HEADER,
     NETSUITE_API_VERSION_HEADER,
@@ -22,6 +21,7 @@ from app.core.exceptions import AuthenticationError
 from app.core.logging import get_logger
 from app.services.netsuite.restlet.client import NetSuiteRestletClient
 from app.services.netsuite.soap.client import NetSuiteSoapClient
+from app.types import HeaderDict
 
 logger = get_logger(__name__)
 

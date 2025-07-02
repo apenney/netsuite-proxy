@@ -6,8 +6,6 @@ from fastapi import HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.types import NetSuiteAuthBase
-
 from app.core.constants import (
     API_PREFIX,
     EXEMPT_PATHS,
@@ -22,6 +20,7 @@ from app.core.constants import (
     NETSUITE_TOKEN_SECRET_HEADER,
 )
 from app.core.logging import get_logger
+from app.types import NetSuiteAuthBase
 
 
 class NetSuiteAuthMiddleware(BaseHTTPMiddleware):

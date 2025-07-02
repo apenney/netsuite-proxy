@@ -12,7 +12,7 @@ router = APIRouter()
 
 class AuthInfoResponse(TypedDict):
     """Response model for auth info endpoint."""
-    
+
     account: str
     auth_type: str
     api_version: str
@@ -39,7 +39,7 @@ async def get_auth_info(auth: NetSuiteAuth) -> AuthInfoResponse:
             api_version="default",
             has_role=False,
         )
-    
+
     return AuthInfoResponse(
         account=auth["account"],
         auth_type=auth.get("auth_type", "unknown"),

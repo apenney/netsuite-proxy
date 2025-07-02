@@ -28,7 +28,7 @@ def _parse_range(part: str) -> tuple[int, int] | None:
             idx = remaining.index("-")
             try:
                 start = int("-" + remaining[:idx])
-                end = int(remaining[idx + 1:])
+                end = int(remaining[idx + 1 :])
                 return (start, end)
             except ValueError:
                 return None
@@ -38,7 +38,7 @@ def _parse_range(part: str) -> tuple[int, int] | None:
         if idx > 0:
             try:
                 start = int(part[:idx])
-                end = int(part[idx + 1:])
+                end = int(part[idx + 1 :])
                 return (start, end)
             except ValueError:
                 return None
@@ -391,4 +391,3 @@ def parse_netsuite_timestamp(timestamp_str: str | None) -> datetime | None:
     except ValueError:
         logger.warning("Failed to parse NetSuite timestamp", timestamp=timestamp_str)
         return None
-
