@@ -1,5 +1,7 @@
 """Tests for NetSuite authentication middleware."""
 
+from typing import Any
+
 import pytest
 from fastapi import Depends, FastAPI, Request
 from fastapi.testclient import TestClient
@@ -39,12 +41,9 @@ class TestNetSuiteAuthMiddleware:
         # Add a test endpoint that requires auth
         @test_app.get("/test-auth")
         async def test_auth(  # pyright: ignore[reportUnusedFunction]
-            auth=Depends(get_netsuite_auth),
-        ):
-            from app.types import OptionalNetSuiteAuth
-            
-            auth_typed: OptionalNetSuiteAuth = auth
-            return {"auth": auth_typed}
+            auth: Any = Depends(get_netsuite_auth),
+        ) -> dict[str, Any]:
+            return {"auth": auth}
 
         return test_app
 
@@ -165,8 +164,9 @@ class TestNetSuiteAuthMiddleware:
         request.state.netsuite_auth = {"account": "TEST123", "auth_type": "oauth"}
 
         auth = get_netsuite_auth(request)
-        assert auth["account"] == "TEST123"
-        assert auth["auth_type"] == "oauth"
+        assert auth is not None
+        assert auth.get("account") == "TEST123"
+        assert auth.get("auth_type") == "oauth"
 
     def test_get_netsuite_auth_dependency_missing(self) -> None:
         """Test get_netsuite_auth when auth is missing."""

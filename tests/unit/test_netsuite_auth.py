@@ -1,5 +1,7 @@
 """Tests for NetSuite authentication service."""
 
+# pyright: reportPrivateUsage=false
+
 import pytest
 
 from app.core.config import NetSuiteConfig

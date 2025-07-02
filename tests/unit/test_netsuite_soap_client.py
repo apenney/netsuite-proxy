@@ -1,5 +1,7 @@
 """Tests for NetSuite SOAP client."""
 
+# pyright: reportPrivateUsage=false
+
 from unittest.mock import Mock, patch
 
 import pytest
@@ -90,7 +92,7 @@ class TestNetSuiteSoapClient:
     @patch("app.services.netsuite.soap.client.NetSuiteSoapClient._generate_nonce")
     @patch("app.services.netsuite.soap.client.NetSuiteSoapClient._get_timestamp")
     @patch("app.services.netsuite.soap.client.NetSuiteSoapClient._generate_signature")
-    def test_create_passport_oauth_auth(self, mock_signature, mock_timestamp, mock_nonce):
+    def test_create_passport_oauth_auth(self, mock_signature: Mock, mock_timestamp: Mock, mock_nonce: Mock):
         """Test passport creation for OAuth authentication."""
         mock_nonce.return_value = "test-nonce"
         mock_timestamp.return_value = "1234567890"
@@ -189,7 +191,7 @@ class TestNetSuiteSoapClient:
             client._handle_soap_error(error)
 
     @patch("zeep.Client")
-    def test_client_creation_error(self, mock_zeep_client):
+    def test_client_creation_error(self, mock_zeep_client: Mock):
         """Test error handling during client creation."""
         mock_zeep_client.side_effect = Exception("Failed to parse WSDL")
 

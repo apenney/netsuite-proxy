@@ -69,7 +69,7 @@ Write readable, domain-specific types instead of primitive type soup:
 ❌ Bad: `dict[str, dict[str, str | None] | None]`
 ✅ Good: `AuthResponse` (defined as TypedDict or dataclass)
 
-See @docs/types.md for detailed examples and patterns.
+See @docs/TYPES.md for detailed examples and patterns.
 
 # Technologies
 
@@ -148,3 +148,12 @@ git commit -m "docs: add customer API documentation"
 - `git diff --staged` - Review what will be committed
 - `git commit --amend` - Modify the last commit
 - `git log --oneline -n 10` - View recent commits
+
+## Datadog (Observability)
+
+It's important for us to be able to observe this product. Within Datadog
+we rely on APM (traces) to provide all the observability of this service,
+with logs emitted as a secondary method. This means you must:
+
+- Make sure that datadog is configured properly for any libraries we use
+- Anything required for emitting APM traces must be done

@@ -1,5 +1,7 @@
 """Tests for NetSuite RESTlet client."""
 
+# pyright: reportPrivateUsage=false
+
 from unittest.mock import Mock, patch
 
 import pytest
@@ -102,7 +104,7 @@ class TestNetSuiteRestletClient:
         assert url == expected
 
     @patch("requests.Session")
-    def test_create_password_session(self, mock_session_class):
+    def test_create_password_session(self, mock_session_class: Mock):
         """Test password session creation."""
         mock_session = Mock()
         mock_session_class.return_value = mock_session
@@ -147,7 +149,7 @@ class TestNetSuiteRestletClient:
             client._create_password_session()
 
     @patch("app.services.netsuite.restlet.client.OAuth1Session")
-    def test_create_oauth_session(self, mock_oauth_class):
+    def test_create_oauth_session(self, mock_oauth_class: Mock):
         """Test OAuth session creation."""
         mock_session = Mock()
         mock_oauth_class.return_value = mock_session
@@ -264,8 +266,10 @@ class TestNetSuiteRestletClient:
         with pytest.raises(RESTletError) as exc_info:
             client._handle_response(response)
 
-        assert exc_info.value.error_code == "400"
-        assert exc_info.value.error_details["message"] == "Invalid parameters"
+        error = exc_info.value
+        assert error.error_code == "400"
+        assert error.error_details is not None
+        assert error.error_details["message"] == "Invalid parameters"
 
     def test_handle_response_error_without_json(self):
         """Test handling error response without JSON."""
@@ -285,8 +289,10 @@ class TestNetSuiteRestletClient:
         with pytest.raises(RESTletError) as exc_info:
             client._handle_response(response)
 
-        assert exc_info.value.error_code == "500"
-        assert exc_info.value.error_details["message"] == "Internal Server Error"
+        error = exc_info.value
+        assert error.error_code == "500"
+        assert error.error_details is not None
+        assert error.error_details["message"] == "Internal Server Error"
 
     def test_handle_response_invalid_json(self):
         """Test handling response with invalid JSON."""
@@ -329,8 +335,10 @@ class TestNetSuiteRestletClient:
         with pytest.raises(RESTletError) as exc_info:
             client._handle_response(response)
 
-        assert exc_info.value.error_code == "INVALID_RECORD"
-        assert exc_info.value.error_details["message"] == "Record not found"
+        error = exc_info.value
+        assert error.error_code == "INVALID_RECORD"
+        assert error.error_details is not None
+        assert error.error_details["message"] == "Record not found"
 
     def test_handle_request_error_connection(self):
         """Test handling connection errors."""

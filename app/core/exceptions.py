@@ -190,7 +190,7 @@ class RESTletError(NetSuiteError):
     """Raised when a RESTlet script returns an error."""
 
     def __init__(
-        self, script_id: str, error_code: str | None = None, error_details: object = None
+        self, script_id: str, error_code: str | None = None, error_details: ErrorDetails | None = None
     ) -> None:
         """
         Initialize RESTletError.
