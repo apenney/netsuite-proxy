@@ -36,9 +36,8 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
         if any(path == exempt or path.startswith(exempt + "/") for exempt in exempt_full_paths):
             return await call_next(request)
 
-        # Get logger with request context if available
-        request_id = getattr(request.state, "request_id", None)
-        logger = get_logger(__name__, request_id=request_id) if request_id else get_logger(__name__)
+        # Get logger (request context will be automatically included if available)
+        logger = get_logger(__name__)
 
         # Extract headers as lowercase dict for case-insensitive access
         headers = {k.lower(): v for k, v in request.headers.items()}

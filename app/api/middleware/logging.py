@@ -7,7 +7,12 @@ from collections.abc import Awaitable, Callable
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.core.logging import add_request_context, get_logger
+from app.core.logging import (
+    add_request_context,
+    clear_request_context,
+    get_logger,
+    set_request_context,
+)
 
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
@@ -34,8 +39,11 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             client_ip=client_ip,
         )
 
-        # Get logger with request context
-        logger = get_logger(__name__, **context)
+        # Set context for all loggers in this request
+        set_request_context(dict(context))
+
+        # Get logger (context will be automatically included)
+        logger = get_logger(__name__)
 
         # Log request start
         start_time = time.time()
@@ -81,3 +89,6 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
             # Re-raise the exception to be handled by FastAPI
             raise
+        finally:
+            # Clear request context
+            clear_request_context()

@@ -9,12 +9,33 @@ This module configures structlog for the application with:
 
 import logging
 import sys
+from contextvars import ContextVar
+from typing import Any, cast
 
 import structlog
 from structlog.processors import CallsiteParameter
 
 from app.core.config import get_settings
 from app.types import RequestContext
+
+# Context variable for storing request context
+request_context_var: ContextVar[dict[str, Any] | None] = ContextVar("request_context", default=None)
+
+
+def inject_request_context(
+    _logger: logging.Logger,
+    _method_name: str,
+    event_dict: dict[str, Any],
+) -> dict[str, Any]:
+    """Inject request context into log events.
+
+    This processor adds request context (request_id, method, path, etc.)
+    to all log events when available.
+    """
+    context = request_context_var.get()
+    if context is not None:
+        event_dict.update(context)
+    return event_dict
 
 
 def configure_logging() -> None:
@@ -33,6 +54,7 @@ def configure_logging() -> None:
 
     # Common processors for all environments
     shared_processors = [
+        inject_request_context,  # Add request context first
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
         structlog.stdlib.PositionalArgumentsFormatter(),
@@ -66,7 +88,7 @@ def configure_logging() -> None:
 
     # Configure structlog
     structlog.configure(
-        processors=processors,
+        processors=cast("Any", processors),  # structlog's type hints are incomplete
         context_class=dict,
         logger_factory=structlog.stdlib.LoggerFactory(),
         cache_logger_on_first_use=True,
@@ -112,3 +134,20 @@ def add_request_context(
         path=path,
         client_ip=client_ip,
     )
+
+
+def set_request_context(context: dict[str, Any]) -> None:
+    """Set the request context for the current async context.
+
+    This context will be automatically included in all log messages
+    within the same async context (request).
+
+    Args:
+        context: Dictionary of context values to include in logs
+    """
+    request_context_var.set(context)
+
+
+def clear_request_context() -> None:
+    """Clear the request context."""
+    request_context_var.set(None)
