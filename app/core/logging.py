@@ -29,7 +29,7 @@ def configure_logging() -> None:
     )
 
     # Determine if we should use JSON or console rendering
-    use_json = settings.environment == "production" and not settings.debug
+    use_json = settings.environment in ("production", "test") and not settings.debug
 
     # Common processors for all environments
     shared_processors = [

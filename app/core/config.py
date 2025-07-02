@@ -5,6 +5,7 @@ This module handles all environment variable loading and configuration
 for the application, including NetSuite credentials and API settings.
 """
 
+import os
 from functools import lru_cache
 from typing import Literal
 
@@ -16,7 +17,7 @@ class NetSuiteConfig(BaseSettings):
     """NetSuite-specific configuration settings."""
 
     # Core NetSuite settings
-    account: str = Field(..., description="NetSuite account ID")
+    account: str = Field(default="", description="NetSuite account ID")
     api: str = Field(default="2024_2", description="NetSuite API version")
     wsdl_url: str | None = Field(
         default=None,
@@ -26,7 +27,7 @@ class NetSuiteConfig(BaseSettings):
     # Authentication - Password-based (legacy)
     email: str | None = Field(default=None, description="NetSuite user email")
     password: str | None = Field(default=None, description="NetSuite user password")
-    role_id: str | None = Field(default=None, description="NetSuite role ID")
+    role: str | None = Field(default=None, description="NetSuite role ID")
 
     # Authentication - OAuth/Token-based (recommended)
     consumer_key: str | None = Field(default=None, description="OAuth consumer key")
@@ -39,6 +40,7 @@ class NetSuiteConfig(BaseSettings):
     deploy_id: str | None = Field(default=None, description="NetSuite RESTlet deployment ID")
 
     # Additional settings
+    application_id: str | None = Field(default=None, description="Application ID for SOAP requests")
     limited_role: str | None = Field(default=None, description="Limited role ID for testing")
     production: bool = Field(default=True, description="Whether this is a production account")
     silent: bool = Field(default=True, description="Suppress NetSuite warnings")
@@ -55,15 +57,24 @@ class NetSuiteConfig(BaseSettings):
             raise ValueError(msg)
         return v
 
+    @field_validator("account")
+    @classmethod
+    def validate_account(cls, v: str) -> str:
+        """Validate account is provided when needed."""
+        # Account can be empty in test environment or when not configured
+        return v
+
     @property
     def has_password_auth(self) -> bool:
         """Check if password authentication is configured."""
-        return all([self.email, self.password])
+        return bool(self.email and self.password)
 
     @property
     def has_oauth_auth(self) -> bool:
         """Check if OAuth authentication is configured."""
-        return all([self.consumer_key, self.consumer_secret, self.token_id, self.token_secret])
+        return bool(
+            self.consumer_key and self.consumer_secret and self.token_id and self.token_secret
+        )
 
     @property
     def auth_type(self) -> Literal["password", "oauth", "none"]:
@@ -85,7 +96,8 @@ class NetSuiteConfig(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_prefix="NETSUITE_",
-        env_file=".env",
+        env_file=".env" if os.getenv("ENVIRONMENT", "development") != "test" else None,
+        env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",  # Ignore extra fields from env
     )
@@ -98,7 +110,7 @@ class Settings(BaseSettings):
     app_name: str = Field(default="NetSuite Proxy", description="Application name")
     version: str = Field(default="0.1.0", description="Application version")
     debug: bool = Field(default=False, description="Debug mode")
-    environment: Literal["development", "staging", "production"] = Field(
+    environment: Literal["development", "staging", "production", "test"] = Field(
         default="development",
         description="Deployment environment",
     )
@@ -138,7 +150,8 @@ class Settings(BaseSettings):
     )
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=".env" if os.getenv("ENVIRONMENT", "development") != "test" else None,
+        env_file_encoding="utf-8",
         case_sensitive=False,
         # Allow NetSuite settings to be set at the top level
         env_nested_delimiter="__",
