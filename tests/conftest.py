@@ -27,8 +27,8 @@ def client() -> Generator[TestClient]:
 def clear_settings_cache(monkeypatch: pytest.MonkeyPatch):
     """Clear settings cache before each test and reset NetSuite env vars."""
 
-    from app.core.config import get_settings
-    
+    from app.core.config import get_settings  # noqa: PLC0415
+
     # Clear any NetSuite environment variables to prevent test pollution
     netsuite_env_vars = [
         "NETSUITE_ACCOUNT",

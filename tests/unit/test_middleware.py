@@ -1,6 +1,5 @@
 """Tests for API middleware."""
 
-
 import pytest
 from fastapi.testclient import TestClient
 

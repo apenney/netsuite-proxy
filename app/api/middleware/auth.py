@@ -106,7 +106,7 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
                 status_code=401,
                 content={
                     "detail": "No valid authentication credentials provided. "
-                     "Either provide email/password or OAuth credentials."
+                    "Either provide email/password or OAuth credentials."
                 },
             )
 

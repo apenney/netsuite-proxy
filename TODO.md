@@ -4,26 +4,6 @@ This file is for tracking tasks related to building this service. Claude, when y
 
 # TODO (next)
 
-## Phase 1: Foundation Setup (High Priority)
-- [ ] Set up basic FastAPI application with health check endpoint
-- [ ] Create configuration module with environment variable management (app/core/config.py)
-- [ ] Implement NetSuite-specific exception classes (app/core/exceptions.py)
-- [ ] Set up structured logging with structlog
-- [ ] Create authentication middleware to extract NetSuite credentials from headers
-
-## Phase 2: NetSuite Integration Layer (High Priority)
-- [ ] Implement NetSuiteSoapClient class with zeep integration
-- [ ] Implement NetSuiteRestletClient class with OAuth1 support
-- [ ] Create authentication service supporting both password and OAuth methods
-
-## Infrastructure Setup (High Priority)
-- [ ] Configure pyproject.toml with proper dependencies and tool configurations
-- [ ] Set up ruff configuration for linting and formatting
-- [ ] Configure pyright for type checking
-- [ ] Set up pytest configuration with VCR.py for recording NetSuite interactions
-
-# TODO (backlog) - Non-critical items
-
 ## Phase 3: Service Layer Migration (Medium Priority)
 - [ ] Create BaseRecordService abstract class with common CRUD operations
 - [ ] Implement BaseSerializer with Pydantic for field mapping
@@ -79,3 +59,10 @@ This file is for tracking tasks related to building this service. Claude, when y
 - [x] Create authentication middleware to extract NetSuite credentials from headers
 - [x] Write unit tests for logging configuration
 - [x] Write unit tests for authentication middleware
+
+## Phase 2: NetSuite Integration Layer (Completed)
+- [x] Implement NetSuiteSoapClient class with zeep integration
+- [x] Implement NetSuiteRestletClient class with OAuth1 support
+- [x] Create authentication service supporting both password and OAuth methods
+- [x] Implement environment-based configuration for test environment
+- [x] Write unit tests for all NetSuite integration classes
