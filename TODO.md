@@ -60,3 +60,15 @@ This file is for tracking tasks related to building this service. Claude, when y
 - [x] Create .gitignore with RUBY directory excluded
 - [x] Install and configure pre-commit hooks
 - [x] Create project structure
+
+## Infrastructure
+- [x] Configure pyproject.toml with proper dependencies and tool configurations
+- [x] Set up ruff configuration for linting and formatting
+- [x] Configure pyright for type checking  
+- [x] Set up pytest configuration with VCR.py
+
+## Phase 1: Foundation (Partial)
+- [x] Create configuration module with environment variable management (app/core/config.py)
+- [x] Implement NetSuite-specific exception classes (app/core/exceptions.py)
+- [x] Write unit tests for configuration module (100% coverage)
+- [x] Write unit tests for exceptions module (100% coverage)

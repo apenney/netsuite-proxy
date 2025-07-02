@@ -30,7 +30,7 @@ This service will be a python project to replace a legacy rails service.
   - Constants: UPPER_SNAKE_CASE
   - Private items: \_prefixed_with_underscore
 - Documentation: Docstrings for all public functions/classes
-- Testing: Every feature needs associated tests
+- Testing: Every feature needs associated tests in pytest format
 
 # Permissions Guidelines
 
@@ -57,3 +57,4 @@ terms of types, and use modern python typing practices. This means things like d
 
 - Always use `ruff format` and `ruff check --fix` to lint and format code.
 - If it makes sense, use `hypothesis` to write a property test instead of multiple unit tests.
+- All tests should use pytest format, not unittest.
