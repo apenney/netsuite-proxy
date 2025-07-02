@@ -8,6 +8,14 @@ This service will be a python project to replace a legacy rails service.
 - @TODO.md is where TODO items and working state should be kept
 - the RUBY/ directory is where the legacy code is for reference purposes
 
+## Documentation
+- @docs/README.md - Documentation overview and quick links
+- @docs/ARCHITECTURE.md - System architecture, design principles, and patterns
+- @docs/TESTING.md - Testing guidelines, patterns, and best practices
+- @docs/PYDANTIC_GUIDE.md - Pydantic usage patterns and examples
+- @docs/GETTING_STARTED.md - Quick start guide for new developers
+- @docs/API_REFERENCE.md - API endpoint documentation
+
 - Focus on writing good tests first, when possible, then the code.
 - Tell me when you think you have useful context that should be added to this file, and ask to add it.
 
