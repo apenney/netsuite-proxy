@@ -2,7 +2,6 @@
 Tests for NetSuite exception classes.
 """
 
-import pytest
 
 from app.core.exceptions import (
     AuthenticationError,

@@ -1,0 +1,389 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "pre-commit": {
+        "pkg-path": "pre-commit"
+      },
+      "python3": {
+        "pkg-path": "python3"
+      },
+      "uv": {
+        "pkg-path": "uv"
+      }
+    },
+    "hook": {
+      "on-activate": "  # Create Python virtual environment if it doesn't exist\n  if [ ! -d \"$FLOX_ENV_PROJECT/.venv\" ]; then\n    echo \"Creating Python virtual environment...\"\n    uv venv \"$FLOX_ENV_PROJECT/.venv\"\n    echo \"Installing Python dependencies...\"\n    uv sync\n  fi\n"
+    },
+    "profile": {
+      "bash": "  # Activate Python virtual environment if it exists\n  if [ -f \"$FLOX_ENV_PROJECT/.venv/bin/activate\" ]; then\n    source \"$FLOX_ENV_PROJECT/.venv/bin/activate\"\n  fi\n",
+      "zsh": "  # Activate Python virtual environment if it exists\n  if [ -f \"$FLOX_ENV_PROJECT/.venv/bin/activate\" ]; then\n    source \"$FLOX_ENV_PROJECT/.venv/bin/activate\"\n  fi\n",
+      "fish": "  # Activate Python virtual environment if it exists\n  if test -f \"$FLOX_ENV_PROJECT/.venv/bin/activate.fish\"\n    source \"$FLOX_ENV_PROJECT/.venv/bin/activate.fish\"\n  end\n"
+    },
+    "options": {
+      "systems": [
+        "aarch64-darwin",
+        "aarch64-linux",
+        "x86_64-darwin",
+        "x86_64-linux"
+      ]
+    }
+  },
+  "packages": [
+    {
+      "attr_path": "pre-commit",
+      "broken": false,
+      "derivation": "/nix/store/jnqv6mqks38dmyfisfxrlclrm88ay4jx-pre-commit-4.2.0.drv",
+      "description": "Framework for managing and maintaining multi-language pre-commit hooks",
+      "install_id": "pre-commit",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "pre-commit-4.2.0",
+      "pname": "pre-commit",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T04:56:23.015576Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/4hhmvq0z9b4lg2fap6jq9fjxvn97cy4l-pre-commit-4.2.0-dist",
+        "out": "/nix/store/gyznp2z3pd8wdkk0wzaz1pfnjrbfragr-pre-commit-4.2.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pre-commit",
+      "broken": false,
+      "derivation": "/nix/store/65asq3k4yk3kn7mq4afjl4f1g7420mlz-pre-commit-4.2.0.drv",
+      "description": "Framework for managing and maintaining multi-language pre-commit hooks",
+      "install_id": "pre-commit",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "pre-commit-4.2.0",
+      "pname": "pre-commit",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T05:20:14.721954Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/xrfiwvbmd54d6djr5fdh1a3jnyv4w5hd-pre-commit-4.2.0-dist",
+        "out": "/nix/store/d1adml1ax94z3cmmdh54aa5gb5b5lr9d-pre-commit-4.2.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pre-commit",
+      "broken": false,
+      "derivation": "/nix/store/9m86zbrkhdryxkyvcqriyxnv9ax44i43-pre-commit-4.2.0.drv",
+      "description": "Framework for managing and maintaining multi-language pre-commit hooks",
+      "install_id": "pre-commit",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "pre-commit-4.2.0",
+      "pname": "pre-commit",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T05:38:21.477339Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/q2vvc95lbycahl1h8dzbqc84mg7s2fbz-pre-commit-4.2.0-dist",
+        "out": "/nix/store/1sbi1q54qab5ap275zxrj9p65r1i09iy-pre-commit-4.2.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pre-commit",
+      "broken": false,
+      "derivation": "/nix/store/x32vigm3igw20gm184z01lx2r04qprhz-pre-commit-4.2.0.drv",
+      "description": "Framework for managing and maintaining multi-language pre-commit hooks",
+      "install_id": "pre-commit",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "pre-commit-4.2.0",
+      "pname": "pre-commit",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T06:00:26.002382Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/xvyw44yiz51j2blpghhfb1fpd4x9vkna-pre-commit-4.2.0-dist",
+        "out": "/nix/store/zxvldrm671gq69azfhwd78siy3zgzn40-pre-commit-4.2.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python3",
+      "broken": false,
+      "derivation": "/nix/store/l3yrcw6mprh8gihyg9g7cbsj9lzh4cmg-python3-3.13.4.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python3",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "python3-3.13.4",
+      "pname": "python3",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T04:56:23.331508Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.13.4",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/j1spz18w5a10r9nj4wpkyh0cx730rs4z-python3-3.13.4"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python3",
+      "broken": false,
+      "derivation": "/nix/store/b01sskbw6j34gyqvs3wqcq3gdzkpz7r8-python3-3.13.4.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python3",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "python3-3.13.4",
+      "pname": "python3",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T05:20:15.298462Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.13.4",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/6b7k5hh6j6jfb4zx4z9mba3ijk2fhhd2-python3-3.13.4-debug",
+        "out": "/nix/store/avgafrfq80hx92p98m60wh2khmnmxrzc-python3-3.13.4"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python3",
+      "broken": false,
+      "derivation": "/nix/store/x6pl21i2q7jbv5rszclg4hscyd5b1n1b-python3-3.13.4.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python3",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "python3-3.13.4",
+      "pname": "python3",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T05:38:21.783112Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.13.4",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/il3s6rjh49l9ccg1nlqm93w67lcnfmqn-python3-3.13.4"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python3",
+      "broken": false,
+      "derivation": "/nix/store/larsjhyzxl4vbkz6g621ka2d0z9krqcg-python3-3.13.4.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python3",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "python3-3.13.4",
+      "pname": "python3",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T06:00:26.638850Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.13.4",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/5rzc9mjyfmqrvg270x0fa3d47lvvvhzd-python3-3.13.4-debug",
+        "out": "/nix/store/sd81bvmch7njdpwx3lkjslixcbj5mivz-python3-3.13.4"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "uv",
+      "broken": false,
+      "derivation": "/nix/store/nr48fpmqanysscs2n0ivghpy7gk3l2jz-uv-0.7.15.drv",
+      "description": "Extremely fast Python package installer and resolver, written in Rust",
+      "install_id": "uv",
+      "license": "[ Apache-2.0, MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "uv-0.7.15",
+      "pname": "uv",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T04:57:14.176555Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.7.15",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/7k6s0mqd2qy62lanrwh900g2yd25r1jn-uv-0.7.15"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "uv",
+      "broken": false,
+      "derivation": "/nix/store/swg11aj9xnhzqszbpwvkjm1ppwmxrzps-uv-0.7.15.drv",
+      "description": "Extremely fast Python package installer and resolver, written in Rust",
+      "install_id": "uv",
+      "license": "[ Apache-2.0, MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "uv-0.7.15",
+      "pname": "uv",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T05:21:23.118094Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.7.15",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/pvplspmljgafacfm7n9v36q6c0rq7hab-uv-0.7.15"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "uv",
+      "broken": false,
+      "derivation": "/nix/store/sgnlvdby38wixvi0ygl66ln0a846rkcv-uv-0.7.15.drv",
+      "description": "Extremely fast Python package installer and resolver, written in Rust",
+      "install_id": "uv",
+      "license": "[ Apache-2.0, MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "uv-0.7.15",
+      "pname": "uv",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T05:39:10.594608Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.7.15",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/i58l5bmcqn8rfdr064rhg5818qz9w8p2-uv-0.7.15"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "uv",
+      "broken": false,
+      "derivation": "/nix/store/04cwfzvb5dk31npcai4vv1g4d6icmf4g-uv-0.7.15.drv",
+      "description": "Extremely fast Python package installer and resolver, written in Rust",
+      "install_id": "uv",
+      "license": "[ Apache-2.0, MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "uv-0.7.15",
+      "pname": "uv",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T06:01:39.502810Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.7.15",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/kdnf2h0nzznm09w2cgdx5wsgcq2x3wa0-uv-0.7.15"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ]
+}

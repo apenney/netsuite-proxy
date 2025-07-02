@@ -2,11 +2,9 @@
 Tests for configuration management.
 """
 
-import os
 from typing import Any
 
 import pytest
-from pydantic import ValidationError
 
 from app.core.config import NetSuiteConfig, Settings, get_netsuite_config, get_settings
 
@@ -16,10 +14,10 @@ def create_netsuite_config(**kwargs: Any) -> NetSuiteConfig:
     # Provide defaults for required fields
     defaults = {"account": "TEST123"}
     defaults.update(kwargs)
-    
+
     # Create config without env file loading
-    # We use model_construct to bypass validation and env loading
-    return NetSuiteConfig.model_construct(**defaults)
+    # We use type: ignore because model_construct signature is complex
+    return NetSuiteConfig.model_construct(**defaults)  # type: ignore[misc]
 
 
 def create_settings(**kwargs: Any) -> Settings:
@@ -29,16 +27,17 @@ def create_settings(**kwargs: Any) -> Settings:
         "secret_key_base": "test-secret-key",
         "netsuite": create_netsuite_config(account="TEST123"),
     }
-    
+
     # Handle nested netsuite config
     if "netsuite" in kwargs:
         netsuite_data = kwargs.pop("netsuite")
         defaults["netsuite"] = create_netsuite_config(**netsuite_data)
-    
+
     defaults.update(kwargs)
-    
+
     # Create settings without env file loading
-    return Settings.model_construct(**defaults)
+    # We use type: ignore because model_construct signature is complex
+    return Settings.model_construct(**defaults)  # type: ignore[misc]
 
 
 class TestNetSuiteConfig:
@@ -140,7 +139,7 @@ class TestNetSuiteConfig:
         monkeypatch.setenv("NETSUITE_TIMEOUT", "3600")
 
         # This will read from env vars
-        config = NetSuiteConfig()
+        config = NetSuiteConfig()  # type: ignore[call-arg]
         assert config.account == "ENV_ACCOUNT"
         assert config.api == "2023_1"
         assert config.timeout == 3600
@@ -190,11 +189,14 @@ class TestSettings:
     def test_env_vars(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test reading from environment variables."""
         monkeypatch.setenv("SECRET_KEY_BASE", "env-secret")
-        monkeypatch.setenv("NETSUITE_ACCOUNT", "ENV123")
+        monkeypatch.setenv("NETSUITE__ACCOUNT", "ENV123")  # Using nested delimiter
         monkeypatch.setenv("ENVIRONMENT", "staging")
         monkeypatch.setenv("DEBUG", "true")
 
-        settings = Settings()
+        # Clear cache to pick up new env vars
+        get_settings.cache_clear()
+
+        settings = Settings()  # type: ignore[call-arg]
         assert settings.secret_key_base == "env-secret"
         assert settings.netsuite.account == "ENV123"
         assert settings.environment == "staging"

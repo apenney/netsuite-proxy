@@ -118,7 +118,7 @@ class Settings(BaseSettings):
     )
 
     # NetSuite configuration
-    netsuite: NetSuiteConfig = Field(default_factory=lambda: NetSuiteConfig())
+    netsuite: NetSuiteConfig
 
     # Logging
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = Field(
@@ -154,7 +154,8 @@ def get_settings() -> Settings:
     This function returns a cached instance of the Settings object,
     ensuring that environment variables are only read once.
     """
-    return Settings()
+    # Settings will be populated from environment variables
+    return Settings()  # type: ignore[call-arg]
 
 
 # Convenience function for getting NetSuite config directly
