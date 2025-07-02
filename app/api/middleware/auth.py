@@ -7,7 +7,19 @@ from fastapi import HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.core.constants import EXEMPT_PATHS, APIRoutes, NetSuiteHeaders
+from app.core.constants import (
+    API_PREFIX,
+    EXEMPT_PATHS,
+    NETSUITE_ACCOUNT_HEADER,
+    NETSUITE_API_VERSION_HEADER,
+    NETSUITE_CONSUMER_KEY_HEADER,
+    NETSUITE_CONSUMER_SECRET_HEADER,
+    NETSUITE_EMAIL_HEADER,
+    NETSUITE_PASSWORD_HEADER,
+    NETSUITE_ROLE_HEADER,
+    NETSUITE_TOKEN_ID_HEADER,
+    NETSUITE_TOKEN_SECRET_HEADER,
+)
 from app.core.logging import get_logger
 
 
@@ -20,7 +32,7 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
         """Extract NetSuite credentials from headers and add to request state."""
         # Skip authentication for exempt paths and their sub-paths
         path = request.url.path
-        exempt_full_paths = [f"{APIRoutes.PREFIX}{path}" for path in EXEMPT_PATHS]
+        exempt_full_paths = [f"{API_PREFIX}{path}" for path in EXEMPT_PATHS]
         if any(path == exempt or path.startswith(exempt + "/") for exempt in exempt_full_paths):
             return await call_next(request)
 
@@ -36,29 +48,29 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
             return headers.get(header_name.lower())
 
         # Check for account header (always required for NetSuite operations)
-        account = get_header(NetSuiteHeaders.ACCOUNT)
+        account = get_header(NETSUITE_ACCOUNT_HEADER)
         if not account:
             logger.warning("Missing NetSuite account header")
             return JSONResponse(
                 status_code=400,
-                content={"detail": f"Missing required header: {NetSuiteHeaders.ACCOUNT}"},
+                content={"detail": f"Missing required header: {NETSUITE_ACCOUNT_HEADER}"},
             )
 
         # Extract authentication credentials
         netsuite_auth = {
             "account": account,
-            "api_version": get_header(NetSuiteHeaders.API_VERSION),
+            "api_version": get_header(NETSUITE_API_VERSION_HEADER),
         }
 
         # Check for password-based auth
-        email = get_header(NetSuiteHeaders.EMAIL)
-        password = get_header(NetSuiteHeaders.PASSWORD)
+        email = get_header(NETSUITE_EMAIL_HEADER)
+        password = get_header(NETSUITE_PASSWORD_HEADER)
         if email and password:
             netsuite_auth.update(
                 {
                     "email": email,
                     "password": password,
-                    "role_id": get_header(NetSuiteHeaders.ROLE),
+                    "role_id": get_header(NETSUITE_ROLE_HEADER),
                     "auth_type": "password",
                 }
             )
@@ -66,10 +78,10 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
 
         # Check for OAuth auth
         oauth_headers = {
-            "consumer_key": get_header(NetSuiteHeaders.CONSUMER_KEY),
-            "consumer_secret": get_header(NetSuiteHeaders.CONSUMER_SECRET),
-            "token_id": get_header(NetSuiteHeaders.TOKEN_ID),
-            "token_secret": get_header(NetSuiteHeaders.TOKEN_SECRET),
+            "consumer_key": get_header(NETSUITE_CONSUMER_KEY_HEADER),
+            "consumer_secret": get_header(NETSUITE_CONSUMER_SECRET_HEADER),
+            "token_id": get_header(NETSUITE_TOKEN_ID_HEADER),
+            "token_secret": get_header(NETSUITE_TOKEN_SECRET_HEADER),
         }
 
         if all(oauth_headers.values()):

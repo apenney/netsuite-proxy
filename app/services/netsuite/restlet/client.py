@@ -6,7 +6,7 @@ import requests
 from requests_oauthlib import OAuth1Session
 
 from app.core.config import NetSuiteConfig
-from app.core.constants import NetSuiteDefaults
+from app.core.constants import NETSUITE_DEFAULT_RESTLET_TIMEOUT
 from app.core.exceptions import (
     AuthenticationError,
     NetSuiteError,
@@ -29,7 +29,7 @@ class NetSuiteRestletClient:
         """
         self.config = config
         self._session: OAuth1Session | requests.Session | None = None
-        self.default_timeout = NetSuiteDefaults.RESTLET_TIMEOUT
+        self.default_timeout = NETSUITE_DEFAULT_RESTLET_TIMEOUT
 
         # Validate RESTlet configuration
         if not config.script_id or not config.deploy_id:

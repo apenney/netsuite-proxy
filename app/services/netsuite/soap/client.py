@@ -11,7 +11,10 @@ from zeep import Client, Settings
 from zeep.transports import Transport
 
 from app.core.config import NetSuiteConfig
-from app.core.constants import NetSuiteDefaults
+from app.core.constants import (
+    NETSUITE_DEFAULT_APPLICATION_ID,
+    NETSUITE_DEFAULT_SOAP_TIMEOUT,
+)
 from app.core.exceptions import (
     AuthenticationError,
     NetSuiteError,
@@ -44,7 +47,7 @@ class NetSuiteSoapClient:
         )
 
         # Configure transport with timeout from config or default
-        self.timeout = config.timeout or NetSuiteDefaults.SOAP_TIMEOUT
+        self.timeout = config.timeout or NETSUITE_DEFAULT_SOAP_TIMEOUT
         self.transport = Transport(
             timeout=self.timeout,
             operation_timeout=self.timeout,
@@ -97,7 +100,7 @@ class NetSuiteSoapClient:
 
         # Create application info
         application_info = {
-            "applicationId": self.config.application_id or NetSuiteDefaults.APPLICATION_ID,
+            "applicationId": self.config.application_id or NETSUITE_DEFAULT_APPLICATION_ID,
         }
 
         # Set SOAP headers
