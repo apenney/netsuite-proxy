@@ -1,11 +1,17 @@
 """NetSuite SOAP client implementation using zeep."""
 
+import base64
+import hashlib
+import hmac
+import secrets
+import time
 from typing import Any
 
 from zeep import Client, Settings
 from zeep.transports import Transport
 
 from app.core.config import NetSuiteConfig
+from app.core.constants import NetSuiteDefaults
 from app.core.exceptions import (
     AuthenticationError,
     NetSuiteError,
@@ -20,7 +26,7 @@ logger = get_logger(__name__)
 class NetSuiteSoapClient:
     """Client for interacting with NetSuite's SOAP API (SuiteTalk)."""
 
-    def __init__(self, config: NetSuiteConfig):
+    def __init__(self, config: NetSuiteConfig) -> None:
         """Initialize NetSuite SOAP client.
 
         Args:
@@ -37,10 +43,11 @@ class NetSuiteSoapClient:
             raw_response=False,
         )
 
-        # Configure transport with timeout
+        # Configure transport with timeout from config or default
+        self.timeout = config.timeout or NetSuiteDefaults.SOAP_TIMEOUT
         self.transport = Transport(
-            timeout=1200,  # 20 minutes for large operations
-            operation_timeout=1200,
+            timeout=self.timeout,
+            operation_timeout=self.timeout,
         )
 
         logger.info(
@@ -71,7 +78,7 @@ class NetSuiteSoapClient:
                 )
             except Exception as e:
                 logger.error("Failed to create SOAP client", error=str(e))
-                raise NetSuiteError(f"Failed to initialize SOAP client: {e!s}")
+                raise NetSuiteError(f"Failed to initialize SOAP client: {e!s}") from e
         return self._client
 
     @property
@@ -90,7 +97,7 @@ class NetSuiteSoapClient:
 
         # Create application info
         application_info = {
-            "applicationId": self.config.application_id or "netsuite-proxy",
+            "applicationId": self.config.application_id or NetSuiteDefaults.APPLICATION_ID,
         }
 
         # Set SOAP headers
@@ -156,27 +163,23 @@ class NetSuiteSoapClient:
 
     def _generate_nonce(self) -> str:
         """Generate nonce for OAuth."""
-        import secrets
-
         return secrets.token_urlsafe(32)
 
     def _get_timestamp(self) -> str:
         """Get current timestamp for OAuth."""
-        import time
-
         return str(int(time.time()))
 
     def _generate_signature(self) -> str:
         """Generate OAuth signature."""
         # This is a simplified version - actual implementation needs proper OAuth signing
-        import base64
-        import hashlib
-        import hmac
 
         # Create base string
         nonce = self._generate_nonce()
         timestamp = self._get_timestamp()
-        base_string = f"{self.config.account}&{self.config.consumer_key}&{self.config.token_id}&{nonce}&{timestamp}"
+        base_string = (
+            f"{self.config.account}&{self.config.consumer_key}&"
+            f"{self.config.token_id}&{nonce}&{timestamp}"
+        )
 
         # Create signing key
         signing_key = f"{self.config.consumer_secret}&{self.config.token_secret}"
@@ -351,7 +354,7 @@ class NetSuiteSoapClient:
         error_str = str(error)
 
         if "timeout" in error_str.lower():
-            raise NetSuiteTimeoutError("SOAP", 1200)
+            raise NetSuiteTimeoutError("SOAP", self.timeout)
         if "authentication" in error_str.lower() or "invalid login" in error_str.lower():
             raise AuthenticationError("NetSuite authentication failed")
         if hasattr(error, "fault"):

@@ -3,6 +3,7 @@
 from typing import Any
 
 from app.core.config import NetSuiteConfig
+from app.core.constants import NetSuiteDefaults, NetSuiteHeaders
 from app.core.exceptions import AuthenticationError
 from app.core.logging import get_logger
 from app.services.netsuite.restlet.client import NetSuiteRestletClient
@@ -14,7 +15,7 @@ logger = get_logger(__name__)
 class NetSuiteAuthService:
     """Service for managing NetSuite authentication and client creation."""
 
-    def __init__(self, config: NetSuiteConfig):
+    def __init__(self, config: NetSuiteConfig) -> None:
         """Initialize authentication service.
 
         Args:
@@ -87,7 +88,7 @@ class NetSuiteAuthService:
             raise
         except Exception as e:
             logger.error("Unexpected error during credential validation", error=str(e))
-            raise AuthenticationError(f"Failed to validate credentials: {e!s}")
+            raise AuthenticationError(f"Failed to validate credentials: {e!s}") from e
 
     def get_account_info(self) -> dict[str, Any]:
         """Get information about the authenticated NetSuite account.
@@ -130,45 +131,43 @@ class NetSuiteAuthService:
         Raises:
             AuthenticationError: If required headers are missing
         """
+        # Convert header keys to lowercase for case-insensitive access
+        headers_lower = {k.lower(): v for k, v in headers.items()}
+
+        # Helper to get header value
+        def get_header(header_name: str) -> str | None:
+            return headers_lower.get(header_name.lower())
+
         # Extract account (required)
-        account = headers.get("x-netsuite-account")
+        account = get_header(NetSuiteHeaders.ACCOUNT)
         if not account:
-            raise AuthenticationError("Missing required header: X-NetSuite-Account")
+            raise AuthenticationError(f"Missing required header: {NetSuiteHeaders.ACCOUNT}")
 
         # Extract API version (optional)
-        api_version = headers.get("x-netsuite-api-version", "2024_2")
+        api_version = get_header(NetSuiteHeaders.API_VERSION) or NetSuiteDefaults.API_VERSION
 
         # Extract role (optional)
-        role = headers.get("x-netsuite-role")
+        role = get_header(NetSuiteHeaders.ROLE)
 
         # Check for OAuth authentication
-        if all(
-            headers.get(key)
-            for key in [
-                "x-netsuite-consumer-key",
-                "x-netsuite-consumer-secret",
-                "x-netsuite-token-id",
-                "x-netsuite-token-secret",
-            ]
-        ):
+        oauth_headers = {
+            "consumer_key": get_header(NetSuiteHeaders.CONSUMER_KEY),
+            "consumer_secret": get_header(NetSuiteHeaders.CONSUMER_SECRET),
+            "token_id": get_header(NetSuiteHeaders.TOKEN_ID),
+            "token_secret": get_header(NetSuiteHeaders.TOKEN_SECRET),
+        }
+
+        if all(oauth_headers.values()):
             logger.debug("Creating auth service with OAuth credentials from headers")
-            config = NetSuiteConfig(
-                account=account,
-                api=api_version,
-                consumer_key=headers["x-netsuite-consumer-key"],
-                consumer_secret=headers["x-netsuite-consumer-secret"],
-                token_id=headers["x-netsuite-token-id"],
-                token_secret=headers["x-netsuite-token-secret"],
-                role=role,
-            )
+            config = NetSuiteConfig(account=account, api=api_version, role=role, **oauth_headers)
         # Check for password authentication
-        elif headers.get("x-netsuite-email") and headers.get("x-netsuite-password"):
+        elif get_header(NetSuiteHeaders.EMAIL) and get_header(NetSuiteHeaders.PASSWORD):
             logger.debug("Creating auth service with password credentials from headers")
             config = NetSuiteConfig(
                 account=account,
                 api=api_version,
-                email=headers["x-netsuite-email"],
-                password=headers["x-netsuite-password"],
+                email=get_header(NetSuiteHeaders.EMAIL),
+                password=get_header(NetSuiteHeaders.PASSWORD),
                 role=role,
             )
         else:
@@ -179,8 +178,10 @@ class NetSuiteAuthService:
             )
 
         # Add RESTlet configuration if provided
-        if headers.get("x-netsuite-script-id") and headers.get("x-netsuite-deploy-id"):
-            config.script_id = headers["x-netsuite-script-id"]
-            config.deploy_id = headers["x-netsuite-deploy-id"]
+        script_id = get_header(NetSuiteHeaders.SCRIPT_ID)
+        deploy_id = get_header(NetSuiteHeaders.DEPLOY_ID)
+        if script_id and deploy_id:
+            config.script_id = script_id
+            config.deploy_id = deploy_id
 
         return cls(config)

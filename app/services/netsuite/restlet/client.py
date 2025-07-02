@@ -6,6 +6,7 @@ import requests
 from requests_oauthlib import OAuth1Session
 
 from app.core.config import NetSuiteConfig
+from app.core.constants import NetSuiteDefaults
 from app.core.exceptions import (
     AuthenticationError,
     NetSuiteError,
@@ -20,9 +21,7 @@ logger = get_logger(__name__)
 class NetSuiteRestletClient:
     """Client for interacting with NetSuite RESTlet scripts."""
 
-    DEFAULT_TIMEOUT = 300  # 5 minutes
-
-    def __init__(self, config: NetSuiteConfig):
+    def __init__(self, config: NetSuiteConfig) -> None:
         """Initialize NetSuite RESTlet client.
 
         Args:
@@ -30,6 +29,7 @@ class NetSuiteRestletClient:
         """
         self.config = config
         self._session: OAuth1Session | requests.Session | None = None
+        self.default_timeout = NetSuiteDefaults.RESTLET_TIMEOUT
 
         # Validate RESTlet configuration
         if not config.script_id or not config.deploy_id:
@@ -51,11 +51,8 @@ class NetSuiteRestletClient:
         account_id = self.config.account.lower().replace("_", "-")
 
         # For sandbox accounts, use different subdomain
-        if account_id.endswith("-sb1") or account_id.endswith("-sb2"):
-            subdomain = account_id
-        else:
-            # Production accounts
-            subdomain = account_id
+        # In this case, both branches are the same, so we can simplify
+        subdomain = account_id
 
         return f"https://{subdomain}.restlets.api.netsuite.com/app/site/hosting/restlet.nl"
 
@@ -170,7 +167,7 @@ class NetSuiteRestletClient:
             Response data from RESTlet
         """
         url = self._build_url(**(params or {}))
-        timeout = timeout or self.DEFAULT_TIMEOUT
+        timeout = timeout or self.default_timeout
 
         try:
             logger.info(
@@ -183,9 +180,9 @@ class NetSuiteRestletClient:
             response = self.session.get(url, timeout=timeout)
             return self._handle_response(response)
 
-        except requests.exceptions.Timeout:
+        except requests.exceptions.Timeout as e:
             logger.error("RESTlet request timed out", timeout=timeout)
-            raise NetSuiteTimeoutError("RESTlet GET", timeout)
+            raise NetSuiteTimeoutError("RESTlet GET", timeout) from e
         except Exception as e:
             logger.error("RESTlet GET failed", error=str(e))
             self._handle_request_error(e)
@@ -207,7 +204,7 @@ class NetSuiteRestletClient:
             Response data from RESTlet
         """
         url = self._build_url(**(params or {}))
-        timeout = timeout or self.DEFAULT_TIMEOUT
+        timeout = timeout or self.default_timeout
 
         try:
             logger.info(
@@ -220,9 +217,9 @@ class NetSuiteRestletClient:
             response = self.session.post(url, json=data, timeout=timeout)
             return self._handle_response(response)
 
-        except requests.exceptions.Timeout:
+        except requests.exceptions.Timeout as e:
             logger.error("RESTlet request timed out", timeout=timeout)
-            raise NetSuiteTimeoutError("RESTlet POST", timeout)
+            raise NetSuiteTimeoutError("RESTlet POST", timeout) from e
         except Exception as e:
             logger.error("RESTlet POST failed", error=str(e))
             self._handle_request_error(e)
@@ -244,7 +241,7 @@ class NetSuiteRestletClient:
             Response data from RESTlet
         """
         url = self._build_url(**(params or {}))
-        timeout = timeout or self.DEFAULT_TIMEOUT
+        timeout = timeout or self.default_timeout
 
         try:
             logger.info(
@@ -257,9 +254,9 @@ class NetSuiteRestletClient:
             response = self.session.put(url, json=data, timeout=timeout)
             return self._handle_response(response)
 
-        except requests.exceptions.Timeout:
+        except requests.exceptions.Timeout as e:
             logger.error("RESTlet request timed out", timeout=timeout)
-            raise NetSuiteTimeoutError("RESTlet PUT", timeout)
+            raise NetSuiteTimeoutError("RESTlet PUT", timeout) from e
         except Exception as e:
             logger.error("RESTlet PUT failed", error=str(e))
             self._handle_request_error(e)
@@ -279,7 +276,7 @@ class NetSuiteRestletClient:
             Response data from RESTlet
         """
         url = self._build_url(**(params or {}))
-        timeout = timeout or self.DEFAULT_TIMEOUT
+        timeout = timeout or self.default_timeout
 
         try:
             logger.info(
@@ -292,9 +289,9 @@ class NetSuiteRestletClient:
             response = self.session.delete(url, timeout=timeout)
             return self._handle_response(response)
 
-        except requests.exceptions.Timeout:
+        except requests.exceptions.Timeout as e:
             logger.error("RESTlet request timed out", timeout=timeout)
-            raise NetSuiteTimeoutError("RESTlet DELETE", timeout)
+            raise NetSuiteTimeoutError("RESTlet DELETE", timeout) from e
         except Exception as e:
             logger.error("RESTlet DELETE failed", error=str(e))
             self._handle_request_error(e)
@@ -353,7 +350,7 @@ class NetSuiteRestletClient:
                 self.config.script_id or "unknown",
                 error_code="INVALID_JSON",
                 error_details={"message": f"Invalid JSON response: {e!s}"},
-            )
+            ) from e
 
     def _handle_request_error(self, error: Exception) -> None:
         """Handle request errors and raise appropriate exceptions.
