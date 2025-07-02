@@ -6,7 +6,7 @@ repos:
         args: [--fix]
       - id: ruff-format
 
-  - repo: https://github.com/northisup/pyright-pretty
-    rev: v0.1.0
+  - repo: https://github.com/DetachHead/basedpyright-pre-commit-mirror
+    rev: v1.13.0
     hooks:
-      - id: pyright-pretty
+      - id: basedpyright

@@ -5,8 +5,8 @@ This service will be a python project to replace a legacy rails service.
 ## 🚨 Critical Rules
 
 1. **ALWAYS make atomic commits** - One feature/fix per commit, never combine
-2. **Run tests before committing** - Use `pyright`, `pytest` and `pre-commit run`
-3. **Follow type hints strictly** - All code must pass pyright
+2. **Run tests before committing** - Use `basedpyright`, `pytest` and `pre-commit run`
+3. **Follow type hints strictly** - All code must pass basedpyright
 4. **Document as you code** - Update docs with any API changes
 
 # Important
@@ -36,13 +36,13 @@ This service will be a python project to replace a legacy rails service.
 - `pytest` to run the python tests
 - `pre-commit run` to run the pre-commit tests
 - `pre-commit run --all-files` to run on all files (not just staged)
-- If pre-commit fails on pyright: use `--no-verify` flag when committing (pyright may fail outside venv)
+- If pre-commit fails on basedpyright: use `--no-verify` flag when committing (basedpyright may fail outside venv)
 
 # Code Style Guidelines
 
 - Formatting: Use Ruff for consistent code formatting
 - Imports: Group by stdlib, third-party, internal modules
-- Type Hints: Required throughout, verified by pyright
+- Type Hints: Required throughout, verified by basedpyright
 - Naming:
   - Classes: PascalCase
   - Methods/functions/variables: snake_case
@@ -71,9 +71,7 @@ Write readable, domain-specific types instead of primitive type soup:
 
 See @docs/TYPES.md for detailed examples and patterns.
 
-# Technologies
-
-## Flox
+# Flox
 
 This project uses flox.dev to manage the packages and services required to run and test this service.
 
@@ -83,16 +81,16 @@ This project uses flox.dev to manage the packages and services required to run a
 - `flox activate` activates the environment to make those packages available
 - `flox activate -- $cmd` allows you to run any command within the flox environment
 
-## Python
+# Python
 
-Our code should be written with types, and a type checker (pyright) will be run to validate these. Please think in
+Our code should be written with types, and a type checker (basedpyright) will be run to validate these. Please think in
 terms of types, and use modern python typing practices. This means things like dataclasses.
 
 - Always use `ruff format` and `ruff check --fix` to lint and format code.
 - If it makes sense, use `hypothesis` to write a property test instead of multiple unit tests.
 - All tests should use pytest format, not unittest.
 
-## Git
+# Git
 
 **CRITICAL: Always make small, atomic commits. NEVER combine multiple features/fixes in one commit.**
 
@@ -149,7 +147,7 @@ git commit -m "docs: add customer API documentation"
 - `git commit --amend` - Modify the last commit
 - `git log --oneline -n 10` - View recent commits
 
-## Datadog (Observability)
+# Datadog (Observability)
 
 It's important for us to be able to observe this product. Within Datadog
 we rely on APM (traces) to provide all the observability of this service,
@@ -157,3 +155,7 @@ with logs emitted as a secondary method. This means you must:
 
 - Make sure that datadog is configured properly for any libraries we use
 - Anything required for emitting APM traces must be done
+
+# Logging
+
+All logs emitted should contain

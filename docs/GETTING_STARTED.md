@@ -156,7 +156,7 @@ flox activate -- ruff format
 flox activate -- ruff check --fix
 
 # Run type checker
-flox activate -- pyright
+flox activate -- basedpyright
 
 # Run tests
 flox activate -- pytest
@@ -325,8 +325,8 @@ pytest --cache-clear
 
 ### Type Checking Issues
 ```bash
-# Run pyright on specific file
-flox activate -- pyright app/api/health.py
+# Run basedpyright on specific file
+flox activate -- basedpyright app/api/health.py
 ```
 
 ## Next Steps
@@ -355,7 +355,7 @@ pytest -vv                 # Run tests verbosely
 # Code Quality
 ruff format               # Format code
 ruff check --fix         # Fix linting issues
-pyright                  # Type check
+basedpyright             # Type check
 
 # Git
 git add -p              # Stage selectively

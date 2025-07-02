@@ -20,7 +20,7 @@ dependencies = [
 dev = [
     "black>=25.1.0",
     "hypothesis>=6.135.20",
-    "pyright>=1.1.402",
+    "basedpyright>=1.22.1",
     "pytest>=8.4.1",
     "pytest-asyncio>=1.0.0",
     "pytest-cov>=6.2.1",
@@ -29,7 +29,7 @@ dev = [
     "vcrpy>=7.0.0",
 ]
 
-[tool.pyright]
+[tool.basedpyright]
 pythonVersion = "3.13"
 include = ["app", "tests"]
 exclude = ["**/__pycache__", ".venv", "build", "dist"]
