@@ -179,10 +179,8 @@ def get_settings() -> Settings:
     ensuring that environment variables are only read once.
     """
     # Settings will be populated from environment variables
-    # The _env_file parameter ensures .env file is loaded
-    from pathlib import Path
-    
-    return Settings(_env_file=".env" if Path(".env").exists() else None)  # type: ignore[call-arg]
+    # The env file is handled by the model_config in Settings class
+    return Settings()
 
 
 # Convenience function for getting NetSuite config directly

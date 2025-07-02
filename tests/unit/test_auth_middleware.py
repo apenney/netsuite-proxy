@@ -1,6 +1,6 @@
 """Tests for NetSuite authentication middleware."""
 
-from typing import Any
+from typing import Annotated, Any
 
 import pytest
 from fastapi import Depends, FastAPI, Request
@@ -41,7 +41,7 @@ class TestNetSuiteAuthMiddleware:
         # Add a test endpoint that requires auth
         @test_app.get("/test-auth")
         async def test_auth(  # pyright: ignore[reportUnusedFunction]
-            auth: Any = Depends(get_netsuite_auth),
+            auth: Annotated[Any, Depends(get_netsuite_auth)],
         ) -> dict[str, Any]:
             return {"auth": auth}
 

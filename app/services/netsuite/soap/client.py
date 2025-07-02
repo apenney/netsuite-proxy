@@ -361,10 +361,12 @@ class NetSuiteSoapClient:
         if "authentication" in error_str.lower() or "invalid login" in error_str.lower():
             raise AuthenticationError("NetSuite authentication failed")
         if hasattr(error, "fault"):
-            # SOAP fault
-            fault = getattr(error, "fault")  # type: ignore[attr-defined]
-            raise SOAPFaultError(
-                getattr(fault, "faultcode", "Unknown"),
-                getattr(fault, "faultstring", str(error)),
-            )
+            # SOAP fault - handle zeep.exceptions.Fault
+            try:
+                fault = error.fault
+                fault_code = fault.faultcode if hasattr(fault, "faultcode") else "Unknown"
+                fault_string = fault.faultstring if hasattr(fault, "faultstring") else str(error)
+                raise SOAPFaultError(fault_code, fault_string)
+            except AttributeError:
+                raise SOAPFaultError("Unknown", str(error)) from None
         raise NetSuiteError(f"NetSuite SOAP error: {error_str}")
