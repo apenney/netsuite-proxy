@@ -154,6 +154,7 @@ class TestSettings:
         assert settings.app_name == "NetSuite Proxy"
         assert settings.version == "0.1.0"
         assert settings.secret_key_base == "test-secret-key"
+        assert settings.netsuite is not None
         assert settings.netsuite.account == "TEST123"
 
     def test_environment_settings(self) -> None:
@@ -176,6 +177,7 @@ class TestSettings:
                 "password": "secure-pass",
             }
         )
+        assert settings.netsuite is not None
         assert settings.netsuite.account == "PROD123"
         assert settings.netsuite.email == "admin@example.com"
         assert settings.netsuite.password == "secure-pass"
@@ -198,6 +200,7 @@ class TestSettings:
 
         settings = Settings()  # type: ignore[call-arg]
         assert settings.secret_key_base == "env-secret"
+        assert settings.netsuite is not None
         assert settings.netsuite.account == "ENV123"
         assert settings.environment == "staging"
         assert settings.debug is True

@@ -38,7 +38,9 @@ class TestNetSuiteAuthMiddleware:
 
         # Add a test endpoint that requires auth
         @test_app.get("/test-auth")
-        async def test_auth(auth: dict = Depends(get_netsuite_auth)) -> dict:  # noqa: B008
+        async def test_auth(  # pyright: ignore[reportUnusedFunction]
+            auth: dict[str, str | None] | None = Depends(get_netsuite_auth),
+        ) -> dict[str, dict[str, str | None] | None]:
             return {"auth": auth}
 
         return test_app

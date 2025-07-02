@@ -4,6 +4,7 @@ Shared pytest fixtures and configuration.
 
 import os
 from collections.abc import Generator
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
@@ -56,7 +57,7 @@ def netsuite_oauth_headers() -> dict[str, str]:
 def mock_settings(monkeypatch: pytest.MonkeyPatch):
     """Helper to mock settings with sensible defaults."""
 
-    def _mock_settings(**kwargs):
+    def _mock_settings(**kwargs: Any) -> None:
         defaults = {
             "SECRET_KEY_BASE": "test-secret",
             "NETSUITE__ACCOUNT": "TEST123",

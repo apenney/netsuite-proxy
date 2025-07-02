@@ -1,6 +1,6 @@
 """NetSuite RESTlet client implementation with OAuth1 support."""
 
-from typing import Any
+from typing import Any, cast
 
 import requests
 from requests_oauthlib import OAuth1Session
@@ -88,9 +88,10 @@ class NetSuiteRestletClient:
             client_secret=self.config.consumer_secret,
             resource_owner_key=self.config.token_id,
             resource_owner_secret=self.config.token_secret,
-            realm=self.config.account,
             signature_method="HMAC-SHA256",
         )
+        # Set realm in auth object after creation
+        session.auth.realm = self.config.account  # type: ignore[attr-defined]
 
         # Set common headers
         session.headers.update(
@@ -334,15 +335,25 @@ class NetSuiteRestletClient:
             data = response.json()
 
             # Check for NetSuite error in response
-            if isinstance(data, dict) and data.get("error"):
-                error = data["error"]
-                raise RESTletError(
-                    self.config.script_id or "unknown",
-                    error_code=error.get("code"),
-                    error_details=error,
-                )
+            if isinstance(data, dict):
+                error_data = cast("dict[str, Any]", data)
+                if "error" in error_data:
+                    error: Any = error_data["error"]
+                    error_code: str | None = None
+                    error_details: dict[str, Any] = {"error": str(error)}
 
-            return data
+                    if isinstance(error, dict):
+                        error_dict = cast("dict[str, Any]", error)
+                        error_code = error_dict.get("code") if "code" in error_dict else None
+                        error_details = error_dict
+
+                    raise RESTletError(
+                        self.config.script_id or "unknown",
+                        error_code=error_code,
+                        error_details=error_details,
+                    )
+
+            return cast("Any", data)
 
         except ValueError as e:
             logger.error("Failed to parse RESTlet response", error=str(e))

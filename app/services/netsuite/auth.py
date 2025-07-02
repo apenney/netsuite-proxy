@@ -172,7 +172,15 @@ class NetSuiteAuthService:
 
         if all(oauth_headers.values()):
             logger.debug("Creating auth service with OAuth credentials from headers")
-            config = NetSuiteConfig(account=account, api=api_version, role=role, **oauth_headers)
+            config = NetSuiteConfig(
+                account=account,
+                api=api_version,
+                role=role,
+                consumer_key=oauth_headers["consumer_key"],
+                consumer_secret=oauth_headers["consumer_secret"],
+                token_id=oauth_headers["token_id"],
+                token_secret=oauth_headers["token_secret"],
+            )
         # Check for password authentication
         elif get_header(NETSUITE_EMAIL_HEADER) and get_header(NETSUITE_PASSWORD_HEADER):
             logger.debug("Creating auth service with password credentials from headers")

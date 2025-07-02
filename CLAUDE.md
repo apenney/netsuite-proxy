@@ -5,7 +5,7 @@ This service will be a python project to replace a legacy rails service.
 ## 🚨 Critical Rules
 
 1. **ALWAYS make atomic commits** - One feature/fix per commit, never combine
-2. **Run tests before committing** - Use `pytest` and `pre-commit run`
+2. **Run tests before committing** - Use `pyright`, `pytest` and `pre-commit run`
 3. **Follow type hints strictly** - All code must pass pyright
 4. **Document as you code** - Update docs with any API changes
 
@@ -16,6 +16,7 @@ This service will be a python project to replace a legacy rails service.
 - the RUBY/ directory is where the legacy code is for reference purposes
 
 ## Documentation
+
 - @docs/README.md - Documentation overview and quick links
 - @docs/ARCHITECTURE.md - System architecture, design principles, and patterns
 - @docs/TESTING.md - Testing guidelines, patterns, and best practices
@@ -86,7 +87,7 @@ terms of types, and use modern python typing practices. This means things like d
 When you've made multiple types of changes, follow this process:
 
 1. **First, review all changes**: `git status` and `git diff`
-2. **Reset all staged files**: `git reset` 
+2. **Reset all staged files**: `git reset`
 3. **Group related changes** and commit them separately:
    - New features/models: `git add <feature-files> && git commit -m "feat: ..."`
    - Bug fixes: `git add <fix-files> && git commit -m "fix: ..."`
@@ -98,6 +99,7 @@ When you've made multiple types of changes, follow this process:
 ### Example Commit Breakdown
 
 If you've implemented a new endpoint with tests and docs:
+
 ```bash
 # Commit 1: Add the model
 git add app/models/customer.py

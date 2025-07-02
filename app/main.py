@@ -81,7 +81,9 @@ def create_app() -> FastAPI:
 
     # Configure exception handlers
     @app.exception_handler(NetSuiteError)
-    async def netsuite_exception_handler(_request: Request, exc: NetSuiteError) -> JSONResponse:
+    async def netsuite_exception_handler(  # pyright: ignore[reportUnusedFunction]
+        _request: Request, exc: NetSuiteError
+    ) -> JSONResponse:
         """Handle NetSuite-specific exceptions."""
         return JSONResponse(
             status_code=500,

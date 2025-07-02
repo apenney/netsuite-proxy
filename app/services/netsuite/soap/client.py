@@ -41,9 +41,9 @@ class NetSuiteSoapClient:
 
         # Configure zeep settings for NetSuite
         self.settings = Settings(
-            xml_huge_tree=True,  # Handle large XML responses
-            strict=False,  # NetSuite's WSDL sometimes has issues
-            raw_response=False,
+            xml_huge_tree=True,  # type: ignore[call-arg]  # Handle large XML responses
+            strict=False,  # type: ignore[call-arg]  # NetSuite's WSDL sometimes has issues
+            raw_response=False,  # type: ignore[call-arg]
         )
 
         # Configure transport with timeout from config or default
@@ -104,7 +104,7 @@ class NetSuiteSoapClient:
         }
 
         # Set SOAP headers
-        self.client.set_default_soapheaders(
+        self.client.set_default_soapheaders(  # type: ignore[arg-type]
             {
                 "passport": passport,
                 "applicationInfo": application_info,
@@ -223,7 +223,7 @@ class NetSuiteSoapClient:
                 "returnSearchColumns": True,
             }
 
-            self.client.set_options(searchPreferences=search_prefs)
+            self.client.set_options(searchPreferences=search_prefs)  # type: ignore[attr-defined]
 
             # Execute search
             response = self.service.search(searchRecord=search_record)
@@ -362,8 +362,9 @@ class NetSuiteSoapClient:
             raise AuthenticationError("NetSuite authentication failed")
         if hasattr(error, "fault"):
             # SOAP fault
+            fault = error.fault
             raise SOAPFaultError(
-                error.fault.faultcode,
-                error.fault.faultstring,
+                getattr(fault, "faultcode", "Unknown"),
+                getattr(fault, "faultstring", str(error)),
             )
         raise NetSuiteError(f"NetSuite SOAP error: {error_str}")

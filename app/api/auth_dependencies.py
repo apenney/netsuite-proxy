@@ -75,24 +75,28 @@ async def extract_netsuite_auth(  # noqa: PLR0913
     has_oauth_auth = all([consumer_key, consumer_secret, token_id, token_secret])
 
     if has_oauth_auth:
-        auth.update({
-            "auth_type": "oauth",
-            "consumer_key": consumer_key,
-            "consumer_secret": consumer_secret,
-            "token_id": token_id,
-            "token_secret": token_secret,
-        })
+        auth.update(
+            {
+                "auth_type": "oauth",
+                "consumer_key": consumer_key,
+                "consumer_secret": consumer_secret,
+                "token_id": token_id,
+                "token_secret": token_secret,
+            }
+        )
         logger.debug(
             "OAuth authentication extracted",
             account=account,
             has_restlet_config=bool(script_id and deploy_id),
         )
     elif has_password_auth:
-        auth.update({
-            "auth_type": "password",
-            "email": email,
-            "password": password,
-        })
+        auth.update(
+            {
+                "auth_type": "password",
+                "email": email,
+                "password": password,
+            }
+        )
         logger.debug(
             "Password authentication extracted",
             account=account,
@@ -113,7 +117,7 @@ async def extract_netsuite_auth(  # noqa: PLR0913
 NetSuiteAuth = Annotated[dict[str, str | None], Depends(extract_netsuite_auth)]
 
 
-def get_netsuite_auth(request: Request) -> dict | None:
+def get_netsuite_auth(request: Request) -> dict[str, str | None] | None:
     """Get NetSuite auth from request state if available.
 
     This is for optional auth scenarios where we want to check
