@@ -26,14 +26,31 @@ from app.types import NetSuiteAuthBase
 class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
     """Middleware for extracting and validating NetSuite authentication headers."""
 
+    def _is_exempt_path(self, path: str) -> bool:
+        """Check if the given path is exempt from authentication."""
+        # Build full paths for exempt paths
+        for exempt in EXEMPT_PATHS:
+            if exempt == "":
+                # Handle root API path specially - only exact match
+                full_path = API_PREFIX
+                if path == full_path:
+                    return True
+            else:
+                full_path = f"{API_PREFIX}{exempt}"
+                # Check exact match or sub-path match
+                if path == full_path or path.startswith(full_path + "/"):
+                    return True
+        return False
+
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         """Extract NetSuite credentials from headers and add to request state."""
         # Skip authentication for exempt paths and their sub-paths
         path = request.url.path
-        exempt_full_paths = [f"{API_PREFIX}{path}" for path in EXEMPT_PATHS]
-        if any(path == exempt or path.startswith(exempt + "/") for exempt in exempt_full_paths):
+
+        # Check if path is exempt
+        if self._is_exempt_path(path):
             return await call_next(request)
 
         # Get logger (request context will be automatically included if available)
@@ -50,10 +67,14 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
         account = get_header(NETSUITE_ACCOUNT_HEADER)
         if not account:
             logger.warning("Missing NetSuite account header")
-            return JSONResponse(
+            response = JSONResponse(
                 status_code=400,
                 content={"detail": f"Missing required header: {NETSUITE_ACCOUNT_HEADER}"},
             )
+            # Add request ID if available
+            if hasattr(request.state, "request_id"):
+                response.headers["X-Request-ID"] = request.state.request_id
+            return response
 
         # Extract authentication credentials
         netsuite_auth = {
@@ -91,13 +112,17 @@ class NetSuiteAuthMiddleware(BaseHTTPMiddleware):
         # Verify we have some form of authentication
         if "auth_type" not in netsuite_auth:
             logger.warning("No valid authentication credentials provided")
-            return JSONResponse(
+            response = JSONResponse(
                 status_code=401,
                 content={
                     "detail": "No valid authentication credentials provided. "
                     "Either provide email/password or OAuth credentials."
                 },
             )
+            # Add request ID if available
+            if hasattr(request.state, "request_id"):
+                response.headers["X-Request-ID"] = request.state.request_id
+            return response
 
         # Add NetSuite auth to request state
         request.state.netsuite_auth = netsuite_auth
