@@ -8,6 +8,7 @@ dependencies = [
     "deepdiff>=8.5.0",
     "fastapi>=0.115.14",
     "httpx>=0.28.1",
+    "pendulum>=3.0.0",
     "pydantic>=2.11.7",
     "pydantic-settings>=2.10.1",
     "python-dotenv>=1.1.1",
@@ -71,6 +72,9 @@ executionEnvironments = [
     { root = "app", pythonPlatform = "All" },
     { root = "tests", extraPaths = ["app"] }
 ]
+
+# Pydantic-specific settings
+reportCallIssue = false  # Disable call-arg checking for Pydantic models
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
