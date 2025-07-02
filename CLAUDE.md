@@ -38,7 +38,7 @@ This service will be a python project to replace a legacy rails service.
 - Ask before: Making destructive operations, installing packages
 - Never allowed: Pushing directly to main branch, changing API keys/secrets
 
-# Architecture
+# Technologies
 
 ## Flox
 
@@ -58,3 +58,12 @@ terms of types, and use modern python typing practices. This means things like d
 - Always use `ruff format` and `ruff check --fix` to lint and format code.
 - If it makes sense, use `hypothesis` to write a property test instead of multiple unit tests.
 - All tests should use pytest format, not unittest.
+
+## Git
+
+Make small, atomic commits that do one thing well. Each commit should have a single, clear purpose that can be described in one sentence.
+
+- Use `git add -p` to stage specific hunks from files, allowing you to separate unrelated changes into different commits
+- Write commit messages as `<type>: <what changed>` where type is `feat|fix|docs|refactor|test|chore`
+- If your commit message needs "and" in it, split it into multiple commits
+- Review staged changes with `git diff --staged` before committing
