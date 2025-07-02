@@ -40,4 +40,5 @@ EXEMPT_PATHS: Final[list[str]] = [
     "/redoc",
     HEALTH_PATH,
     HEALTH_DETAILED_PATH,
+    "/test",  # Test endpoints for exception handling
 ]

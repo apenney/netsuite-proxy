@@ -14,7 +14,15 @@ from fastapi.responses import JSONResponse
 from app.api.health import router as health_router
 from app.api.middleware import NetSuiteAuthMiddleware, RequestLoggingMiddleware
 from app.core.config import get_settings
-from app.core.exceptions import NetSuiteError
+from app.core.exceptions import (
+    AuthenticationError,
+    NetSuiteError,
+    NetSuitePermissionError,
+    PageBoundsError,
+    RateLimitError,
+    RecordNotFoundError,
+    ValidationError,
+)
 from app.core.logging import configure_logging, get_logger
 
 
@@ -85,8 +93,21 @@ def create_app() -> FastAPI:
         _request: Request, exc: NetSuiteError
     ) -> JSONResponse:
         """Handle NetSuite-specific exceptions."""
+        # Map exception types to HTTP status codes
+        status_code_mapping: dict[type[NetSuiteError], int] = {
+            AuthenticationError: 401,
+            NetSuitePermissionError: 403,
+            RecordNotFoundError: 404,
+            PageBoundsError: 400,
+            ValidationError: 400,
+            RateLimitError: 429,
+        }
+
+        # Get the appropriate status code, defaulting to 500
+        status_code = status_code_mapping.get(type(exc), 500)
+
         return JSONResponse(
-            status_code=500,
+            status_code=status_code,
             content={
                 "error": exc.message,
                 "error_type": exc.__class__.__name__,
