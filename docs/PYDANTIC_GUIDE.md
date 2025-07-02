@@ -171,10 +171,11 @@ class DateRange(BaseModel):
 
 ### 3. Computed Properties
 
-Add computed fields:
+Add computed fields using Pydantic v2's `computed_field` decorator:
 
 ```python
 from pydantic import BaseModel, computed_field
+from typing import Literal, Optional
 
 class NetSuiteConfig(BaseModel):
     email: Optional[str] = None
@@ -185,12 +186,15 @@ class NetSuiteConfig(BaseModel):
     @computed_field
     @property
     def auth_type(self) -> Literal["password", "oauth", "none"]:
-        if self.email and self.password:
-            return "password"
-        elif self.consumer_key and self.consumer_secret:
+        """Determine the authentication type available."""
+        if self.consumer_key and self.consumer_secret:
             return "oauth"
+        elif self.email and self.password:
+            return "password"
         return "none"
 ```
+
+Note: The `@computed_field` decorator is the Pydantic v2 way to handle computed properties. It ensures the field is included in model exports and schema generation.
 
 ## Serialization and Deserialization
 

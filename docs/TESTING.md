@@ -195,6 +195,26 @@ def auth_headers():
         "X-NetSuite-Email": "test@example.com",
         "X-NetSuite-Password": "test-password"
     }
+
+@pytest.fixture
+def netsuite_auth_headers():
+    """Standard NetSuite password auth headers for testing."""
+    return {
+        "X-NetSuite-Account": "TEST123",
+        "X-NetSuite-Email": "test@example.com",
+        "X-NetSuite-Password": "test-password",
+    }
+
+@pytest.fixture
+def netsuite_oauth_headers():
+    """Standard NetSuite OAuth headers for testing."""
+    return {
+        "X-NetSuite-Account": "TEST123",
+        "X-NetSuite-Consumer-Key": "test-key",
+        "X-NetSuite-Consumer-Secret": "test-secret",
+        "X-NetSuite-Token-Id": "test-token",
+        "X-NetSuite-Token-Secret": "test-token-secret",
+    }
 ```
 
 ## Best Practices

@@ -266,11 +266,11 @@ Base error for all NetSuite-related issues.
 }
 ```
 
-### PermissionError
+### NetSuitePermissionError
 ```json
 {
   "error": "Insufficient permissions",
-  "error_type": "PermissionError",
+  "error_type": "NetSuitePermissionError",
   "details": {
     "required_permission": "view_customer"
   }

@@ -213,7 +213,18 @@ logger = get_logger(__name__)
 logger.info("Processing request", customer_id=customer_id, status="started")
 ```
 
-3. Use pytest debugging:
+3. Import constants from core:
+```python
+from app.core import NETSUITE_ACCOUNT_HEADER, DEFAULT_PAGE_SIZE
+# Or import all NetSuite headers
+from app.core.constants import (
+    NETSUITE_ACCOUNT_HEADER,
+    NETSUITE_EMAIL_HEADER,
+    NETSUITE_PASSWORD_HEADER,
+)
+```
+
+4. Use pytest debugging:
 ```bash
 pytest -vv --pdb  # Drop into debugger on failure
 ```

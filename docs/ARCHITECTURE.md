@@ -20,13 +20,15 @@ netsuite-proxy/
 ├── app/                    # Main application code
 │   ├── api/               # API layer (endpoints, dependencies)
 │   │   ├── endpoints/     # API endpoint modules
-│   │   ├── dependencies.py # Reusable dependency injections
+│   │   ├── auth_dependencies.py # Authentication dependency injections
+│   │   ├── exception_handlers.py # Exception to HTTP response mapping
 │   │   ├── health.py      # Health check endpoints
 │   │   └── middleware/    # API middleware
 │   │       ├── auth.py    # NetSuite authentication extraction
 │   │       └── logging.py # Request/response logging
 │   ├── core/              # Core functionality
 │   │   ├── config.py      # Configuration management
+│   │   ├── constants.py   # Module-level constants (headers, defaults)
 │   │   ├── exceptions.py  # Custom exception classes
 │   │   ├── logging.py     # Structured logging configuration
 │   │   └── security.py    # Security utilities (future)
@@ -127,7 +129,7 @@ Environment variables use double underscore for nested configuration:
 ```
 NetSuiteError (base exception)
 ├── AuthenticationError
-├── PermissionError
+├── NetSuitePermissionError  
 ├── PageBoundsError
 ├── RecordNotFoundError
 ├── RateLimitError
