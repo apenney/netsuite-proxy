@@ -158,4 +158,5 @@ with logs emitted as a secondary method. This means you must:
 
 # Logging
 
-All logs emitted should contain
+When possible logs should include relevant fields to help troubleshooting.
+The potential fields we should log with are documented in @docs/LOGGING.md
