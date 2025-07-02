@@ -45,6 +45,10 @@ ignore = [
 [lint.per-file-ignores]
 "tests/*" = ["ANN", "PT", "PLR2004"]  # Relax type annotations and magic values in tests
 "app/api/endpoints/*" = ["TCH"]  # Allow non-type-checking imports in endpoints
+"app/services/protocols.py" = ["ANN401"]  # Allow Any types in protocol definitions
+"app/services/netsuite/*.py" = ["ANN401"]  # Allow Any types for NetSuite objects
+"app/services/netsuite/soap/*.py" = ["ANN401"]  # Allow Any types for SOAP objects
+"app/services/netsuite/restlet/*.py" = ["ANN401"]  # Allow Any types for RESTlet responses
 
 [lint.isort]
 known-first-party = ["app"]
