@@ -7,11 +7,13 @@ This module creates and configures the FastAPI application instance.
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.api.health import router as health_router
 from app.core.config import get_settings
+from app.core.exceptions import NetSuiteError
 
 
 @asynccontextmanager
@@ -58,6 +60,19 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Configure exception handlers
+    @app.exception_handler(NetSuiteError)
+    async def netsuite_exception_handler(_request: Request, exc: NetSuiteError) -> JSONResponse:
+        """Handle NetSuite-specific exceptions."""
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": exc.message,
+                "error_type": exc.__class__.__name__,
+                "details": exc.details,
+            },
+        )
+
     # Include routers
     app.include_router(health_router, prefix=settings.api_prefix, tags=["health"])
 
@@ -70,7 +85,7 @@ app = create_app()
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     settings = get_settings()
     uvicorn.run(
         "app.main:app",
