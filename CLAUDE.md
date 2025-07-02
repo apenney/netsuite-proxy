@@ -2,6 +2,13 @@
 
 This service will be a python project to replace a legacy rails service.
 
+## 🚨 Critical Rules
+
+1. **ALWAYS make atomic commits** - One feature/fix per commit, never combine
+2. **Run tests before committing** - Use `pytest` and `pre-commit run`
+3. **Follow type hints strictly** - All code must pass pyright
+4. **Document as you code** - Update docs with any API changes
+
 # Important
 
 - @PLAN.md is the overall plan that was created for this project
@@ -21,11 +28,14 @@ This service will be a python project to replace a legacy rails service.
 
 - When you finish making changes, always run the `ruff` commands.
 - Before you git commit, run `pre-commit` to validate work.
+- When committing multiple changes, ALWAYS break them into separate atomic commits (see Git section below)
 
 # Build And Test Commands
 
 - `pytest` to run the python tests
 - `pre-commit run` to run the pre-commit tests
+- `pre-commit run --all-files` to run on all files (not just staged)
+- If pre-commit fails on pyright: use `--no-verify` flag when committing (pyright may fail outside venv)
 
 # Code Style Guidelines
 
@@ -69,9 +79,56 @@ terms of types, and use modern python typing practices. This means things like d
 
 ## Git
 
-Make small, atomic commits that do one thing well. Each commit should have a single, clear purpose that can be described in one sentence.
+**CRITICAL: Always make small, atomic commits. NEVER combine multiple features/fixes in one commit.**
 
-- Use `git add -p` to stage specific hunks from files, allowing you to separate unrelated changes into different commits
-- Write commit messages as `<type>: <what changed>` where type is `feat|fix|docs|refactor|test|chore`
-- If your commit message needs "and" in it, split it into multiple commits
-- Review staged changes with `git diff --staged` before committing
+### Commit Strategy When Multiple Changes Exist
+
+When you've made multiple types of changes, follow this process:
+
+1. **First, review all changes**: `git status` and `git diff`
+2. **Reset all staged files**: `git reset` 
+3. **Group related changes** and commit them separately:
+   - New features/models: `git add <feature-files> && git commit -m "feat: ..."`
+   - Bug fixes: `git add <fix-files> && git commit -m "fix: ..."`
+   - Refactoring: `git add <refactor-files> && git commit -m "refactor: ..."`
+   - Documentation: `git add <doc-files> && git commit -m "docs: ..."`
+   - Test updates: `git add <test-files> && git commit -m "test: ..."`
+   - Config/build changes: `git add <config-files> && git commit -m "chore: ..."`
+
+### Example Commit Breakdown
+
+If you've implemented a new endpoint with tests and docs:
+```bash
+# Commit 1: Add the model
+git add app/models/customer.py
+git commit -m "feat: add Customer response model"
+
+# Commit 2: Add the endpoint
+git add app/api/customers.py
+git commit -m "feat: implement customer endpoint"
+
+# Commit 3: Add tests
+git add tests/unit/test_customers.py
+git commit -m "test: add customer endpoint tests"
+
+# Commit 4: Add documentation
+git add docs/customers.md
+git commit -m "docs: add customer API documentation"
+```
+
+### Commit Message Format
+
+- Format: `<type>: <what changed>`
+- Types: `feat|fix|docs|refactor|test|chore`
+- Keep under 72 characters
+- Use imperative mood ("add" not "added")
+- No period at the end
+
+### Git Commands Reference
+
+- `git add -p` - Stage specific hunks interactively
+- `git reset` - Unstage all files
+- `git reset <file>` - Unstage specific file
+- `git diff --staged` - Review what will be committed
+- `git commit --amend` - Modify the last commit
+- `git log --oneline -n 10` - View recent commits
