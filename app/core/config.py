@@ -9,7 +9,7 @@ import os
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, computed_field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -64,11 +64,13 @@ class NetSuiteConfig(BaseSettings):
         # Account can be empty in test environment or when not configured
         return v
 
+    @computed_field
     @property
     def has_password_auth(self) -> bool:
         """Check if password authentication is configured."""
         return bool(self.email and self.password)
 
+    @computed_field
     @property
     def has_oauth_auth(self) -> bool:
         """Check if OAuth authentication is configured."""
@@ -76,6 +78,7 @@ class NetSuiteConfig(BaseSettings):
             self.consumer_key and self.consumer_secret and self.token_id and self.token_secret
         )
 
+    @computed_field
     @property
     def auth_type(self) -> Literal["password", "oauth", "none"]:
         """Determine the authentication type available."""
