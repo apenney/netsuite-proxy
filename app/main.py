@@ -12,8 +12,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.health import router as health_router
+from app.api.middleware import NetSuiteAuthMiddleware, RequestLoggingMiddleware
 from app.core.config import get_settings
 from app.core.exceptions import NetSuiteError
+from app.core.logging import configure_logging, get_logger
 
 
 @asynccontextmanager
@@ -27,10 +29,21 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     app.state.settings = settings
 
+    # Configure logging
+    configure_logging()
+    logger = get_logger(__name__)
+    logger.info(
+        "Application started",
+        app_name=settings.app_name,
+        version=settings.version,
+        environment=settings.environment,
+        debug=settings.debug,
+    )
+
     yield
 
     # Shutdown
-    # Add cleanup tasks here if needed
+    logger.info("Application shutting down")
 
 
 def create_app() -> FastAPI:
@@ -59,6 +72,12 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Add request logging middleware
+    app.add_middleware(RequestLoggingMiddleware)
+
+    # Add NetSuite authentication middleware
+    app.add_middleware(NetSuiteAuthMiddleware)
 
     # Configure exception handlers
     @app.exception_handler(NetSuiteError)
