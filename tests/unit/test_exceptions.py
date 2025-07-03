@@ -35,7 +35,7 @@ class TestNetSuiteError:
         error = NetSuiteError("Validation failed", details)
         assert error.message == "Validation failed"
         assert error.details == details
-        assert error.details["code"] == "ERR001"
+        assert error.details["code"] == "ERR001"  # type: ignore[typeddict-item]
 
 
 class TestAuthenticationError:
@@ -182,7 +182,7 @@ class TestRESTletError:
         assert str(error) == "RESTlet error in script customscript123"
         assert error.script_id == "customscript123"
         assert error.error_code is None
-        assert error.error_details is None
+        assert error.error_details == {}
 
     def test_restlet_error_with_code(self) -> None:
         """Test RESTlet error with error code."""

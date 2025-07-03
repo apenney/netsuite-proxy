@@ -5,13 +5,34 @@ This module defines custom exceptions for handling various NetSuite API errors
 and application-specific error conditions.
 """
 
-from app.types import ErrorDetails
+from app.types import (
+    ErrorDetails,
+    PageBoundsErrorDetails,
+    RateLimitErrorDetails,
+    RecordNotFoundErrorDetails,
+    RESTletErrorDetails,
+    SOAPFaultErrorDetails,
+    TimeoutErrorDetails,
+    ValidationErrorDetails,
+)
+
+# Union type for all possible error detail types
+AnyErrorDetails = (
+    ErrorDetails
+    | PageBoundsErrorDetails
+    | RateLimitErrorDetails
+    | RecordNotFoundErrorDetails
+    | RESTletErrorDetails
+    | SOAPFaultErrorDetails
+    | TimeoutErrorDetails
+    | ValidationErrorDetails
+)
 
 
 class NetSuiteError(Exception):
     """Base exception for all NetSuite-related errors."""
 
-    def __init__(self, message: str, details: ErrorDetails | None = None) -> None:
+    def __init__(self, message: str, details: AnyErrorDetails | None = None) -> None:
         """
         Initialize NetSuiteError.
 
@@ -21,7 +42,7 @@ class NetSuiteError(Exception):
         """
         super().__init__(message)
         self.message = message
-        self.details = details or {}
+        self.details = details or {}  # type: ignore[assignment]
 
 
 class AuthenticationError(NetSuiteError):
@@ -35,6 +56,8 @@ class NetSuitePermissionError(NetSuiteError):
 class PageBoundsError(NetSuiteError):
     """Raised when requesting a page beyond available results."""
 
+    details: PageBoundsErrorDetails  # type: ignore[assignment]
+
     def __init__(self, page: int, total_pages: int) -> None:
         """
         Initialize PageBoundsError.
@@ -44,13 +67,16 @@ class PageBoundsError(NetSuiteError):
             total_pages: Total available pages
         """
         message = f"Page {page} is out of bounds. Total pages: {total_pages}"
-        super().__init__(message, {"page": page, "total_pages": total_pages})
+        details: PageBoundsErrorDetails = {"page": page, "total_pages": total_pages}
+        super().__init__(message, details)
         self.page = page
         self.total_pages = total_pages
 
 
 class RecordNotFoundError(NetSuiteError):
     """Raised when a requested record is not found."""
+
+    details: RecordNotFoundErrorDetails  # type: ignore[assignment]
 
     def __init__(self, record_type: str, record_id: str | int) -> None:
         """
@@ -61,7 +87,8 @@ class RecordNotFoundError(NetSuiteError):
             record_id: ID of the record that was not found
         """
         message = f"{record_type} with ID {record_id} not found"
-        super().__init__(message, {"record_type": record_type, "record_id": record_id})
+        details: RecordNotFoundErrorDetails = {"record_type": record_type, "record_id": record_id}
+        super().__init__(message, details)
         self.record_type = record_type
         self.record_id = record_id
 
@@ -73,6 +100,8 @@ class InvalidSearchCriteriaError(NetSuiteError):
 class RateLimitError(NetSuiteError):
     """Raised when NetSuite API rate limits are exceeded."""
 
+    details: RateLimitErrorDetails  # type: ignore[assignment]
+
     def __init__(self, retry_after: int | None = None) -> None:
         """
         Initialize RateLimitError.
@@ -83,12 +112,15 @@ class RateLimitError(NetSuiteError):
         message = "NetSuite API rate limit exceeded"
         if retry_after:
             message += f". Retry after {retry_after} seconds"
-        super().__init__(message, {"retry_after": retry_after})
+        details: RateLimitErrorDetails = {"retry_after": retry_after}
+        super().__init__(message, details)
         self.retry_after = retry_after
 
 
 class SOAPFaultError(NetSuiteError):
     """Raised when NetSuite returns a SOAP fault."""
+
+    details: SOAPFaultErrorDetails  # type: ignore[assignment]
 
     def __init__(self, fault_code: str, fault_string: str, detail: str | None = None) -> None:
         """
@@ -100,14 +132,12 @@ class SOAPFaultError(NetSuiteError):
             detail: Additional fault details (optional)
         """
         message = f"SOAP Fault: {fault_code} - {fault_string}"
-        super().__init__(
-            message,
-            {
-                "fault_code": fault_code,
-                "fault_string": fault_string,
-                "detail": detail,
-            },
-        )
+        details: SOAPFaultErrorDetails = {
+            "fault_code": fault_code,
+            "fault_string": fault_string,
+            "detail": detail,
+        }
+        super().__init__(message, details)
         self.fault_code = fault_code
         self.fault_string = fault_string
         self.detail = detail
@@ -115,6 +145,8 @@ class SOAPFaultError(NetSuiteError):
 
 class ConcurrencyError(NetSuiteError):
     """Raised when a record has been modified by another process."""
+
+    details: RecordNotFoundErrorDetails  # type: ignore[assignment]
 
     def __init__(self, record_type: str, record_id: str | int) -> None:
         """
@@ -128,13 +160,16 @@ class ConcurrencyError(NetSuiteError):
             f"Concurrency error: {record_type} with ID {record_id} "
             "has been modified by another process"
         )
-        super().__init__(message, {"record_type": record_type, "record_id": record_id})
+        details: RecordNotFoundErrorDetails = {"record_type": record_type, "record_id": record_id}
+        super().__init__(message, details)
         self.record_type = record_type
         self.record_id = record_id
 
 
 class ValidationError(NetSuiteError):
     """Raised when data validation fails."""
+
+    details: ValidationErrorDetails  # type: ignore[assignment]
 
     def __init__(self, field: str, value: object, reason: str) -> None:
         """
@@ -146,14 +181,12 @@ class ValidationError(NetSuiteError):
             reason: Reason for validation failure
         """
         message = f"Validation error for field '{field}': {reason}"
-        super().__init__(
-            message,
-            {
-                "field": field,
-                "value": value,
-                "reason": reason,
-            },
-        )
+        details: ValidationErrorDetails = {
+            "field": field,
+            "value": value,
+            "reason": reason,
+        }
+        super().__init__(message, details)
         self.field = field
         self.value = value
         self.reason = reason
@@ -166,6 +199,8 @@ class ConfigurationError(NetSuiteError):
 class NetSuiteTimeoutError(NetSuiteError):
     """Raised when a NetSuite API request times out."""
 
+    details: TimeoutErrorDetails  # type: ignore[assignment]
+
     def __init__(self, operation: str, timeout_seconds: int) -> None:
         """
         Initialize TimeoutError.
@@ -175,19 +210,19 @@ class NetSuiteTimeoutError(NetSuiteError):
             timeout_seconds: Timeout duration in seconds
         """
         message = f"Operation '{operation}' timed out after {timeout_seconds} seconds"
-        super().__init__(
-            message,
-            {
-                "operation": operation,
-                "timeout_seconds": timeout_seconds,
-            },
-        )
+        details: TimeoutErrorDetails = {
+            "operation": operation,
+            "timeout_seconds": timeout_seconds,
+        }
+        super().__init__(message, details)
         self.operation = operation
         self.timeout_seconds = timeout_seconds
 
 
 class RESTletError(NetSuiteError):
     """Raised when a RESTlet script returns an error."""
+
+    details: RESTletErrorDetails  # type: ignore[assignment]
 
     def __init__(
         self,
@@ -206,14 +241,12 @@ class RESTletError(NetSuiteError):
         message = f"RESTlet error in script {script_id}"
         if error_code:
             message += f": {error_code}"
-        super().__init__(
-            message,
-            {
-                "script_id": script_id,
-                "error_code": error_code,
-                "error_details": error_details,
-            },
-        )
+        details: RESTletErrorDetails = {
+            "script_id": script_id,
+            "error_code": error_code,
+            "error_details": error_details or {},
+        }
+        super().__init__(message, details)
         self.script_id = script_id
         self.error_code = error_code
-        self.error_details = error_details
+        self.error_details = error_details or {}
